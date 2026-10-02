@@ -1,0 +1,33 @@
+# Local patches mounted over the published dograh-api image.
+#
+# Both files are byte-identical to the image's copies apart from the changes
+# below, so mounting them does not skew the container from its release version
+# in any other respect.
+#
+#   api/utils/tunnel.py
+#     Caches the cloudflared lookup (including the "no tunnel" outcome) and
+#     lowers the probe timeout. Without this, /health re-probes a cloudflared
+#     service that isn't running and stalls ~6s, past the UI's 3s budget.
+#
+#   api/services/pipecat/service_factory.py
+#     The local latency patch is intentionally not mounted against the latest
+#     image because it targets an older Pipecat API (including LMNT imports).
+#     Rebase the patch before enabling this mount again.
+#
+#   api/services/configuration/registry.py
+#     OpenRouter/Sarvam node configs default api_key to OPENROUTER_API_KEY /
+#     SARVAM_API_KEY from the environment, so new nodes don't need the key
+#     pasted in by hand. The env vars themselves come from .env below —
+#     Compose's .env is only used for interpolation and isn't auto-injected
+#     into containers, so pass them through explicitly (same as the S3 vars
+#     in docker-compose.yaml).
+#
+# Remove this file to run the stock image.
+services:
+  api:
+    volumes:
+      - ./api/utils/tunnel.py:/app/api/utils/tunnel.py:ro
+      - ./api/services/configuration/registry.py:/app/api/services/configuration/registry.py:ro
+    environment:
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      SARVAM_API_KEY: "${SARVAM_API_KEY:-}"
