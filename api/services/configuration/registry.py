@@ -1,3 +1,4 @@
+import os
 import random
 from collections.abc import Iterable
 from enum import Enum, auto
@@ -559,6 +560,10 @@ class GroqLLMService(BaseLLMConfiguration):
 class OpenRouterLLMConfiguration(BaseLLMConfiguration):
     model_config = OPENROUTER_PROVIDER_MODEL_CONFIG
     provider: Literal[ServiceProviders.OPENROUTER] = ServiceProviders.OPENROUTER
+    api_key: str | list[str] = Field(
+        default_factory=lambda: os.getenv("OPENROUTER_API_KEY", ""),
+        description="OpenRouter API key. Defaults to OPENROUTER_API_KEY from the environment.",
+    )
     model: str = Field(
         default="openai/gpt-4.1",
         description="OpenRouter model slug in 'vendor/model' form.",
@@ -718,6 +723,10 @@ class MiniMaxLLMConfiguration(BaseLLMConfiguration):
 class SarvamLLMConfiguration(BaseLLMConfiguration):
     model_config = SARVAM_PROVIDER_MODEL_CONFIG
     provider: Literal[ServiceProviders.SARVAM] = ServiceProviders.SARVAM
+    api_key: str | list[str] = Field(
+        default_factory=lambda: os.getenv("SARVAM_API_KEY", ""),
+        description="Sarvam API key. Defaults to SARVAM_API_KEY from the environment.",
+    )
     model: str = Field(
         default="sarvam-105b-conversations",
         description="Sarvam chat model.",
@@ -1411,6 +1420,10 @@ class InworldTTSConfiguration(BaseTTSConfiguration):
 class SarvamTTSConfiguration(BaseTTSConfiguration):
     model_config = SARVAM_PROVIDER_MODEL_CONFIG
     provider: Literal[ServiceProviders.SARVAM] = ServiceProviders.SARVAM
+    api_key: str | list[str] = Field(
+        default_factory=lambda: os.getenv("SARVAM_API_KEY", ""),
+        description="Sarvam API key. Defaults to SARVAM_API_KEY from the environment.",
+    )
     model: str = Field(
         default="bulbul:v2",
         description="Sarvam TTS model (voice list depends on this).",
@@ -1973,6 +1986,10 @@ class DograhSTTService(BaseSTTConfiguration):
 class SarvamSTTConfiguration(BaseSTTConfiguration):
     model_config = SARVAM_PROVIDER_MODEL_CONFIG
     provider: Literal[ServiceProviders.SARVAM] = ServiceProviders.SARVAM
+    api_key: str | list[str] = Field(
+        default_factory=lambda: os.getenv("SARVAM_API_KEY", ""),
+        description="Sarvam API key. Defaults to SARVAM_API_KEY from the environment.",
+    )
     model: str = Field(
         default="saarika:v2.5",
         description=(

@@ -1110,6 +1110,20 @@ def _migrate_deprecated_google_model(model: str) -> str:
     return model
 
 
+# OpenRouter model-slug prefixes whose upstream provider accepts
+# ``reasoning: {"enabled": false}``. This is an allowlist on purpose: endpoints
+# that mandate reasoning (Google's Gemini 3.x among them) reject the flag with a
+# 400, which would fail every turn of the call rather than just skip the hint.
+_OPENROUTER_REASONING_OPTIONAL_PREFIXES = ("qwen/",)
+
+
+def _openrouter_supports_disabling_reasoning(model: str) -> bool:
+    """Whether ``model`` accepts an explicit request to skip thinking tokens."""
+    if not model:
+        return False
+    return model.lower().startswith(_OPENROUTER_REASONING_OPTIONAL_PREFIXES)
+
+
 @_report_service_factory_failures(ErrorSource.LLM, provider_argument=0)
 def create_llm_service_from_provider(
     provider: str,
@@ -1194,11 +1208,16 @@ def create_llm_service_from_provider(
         if base_url:
             _validate_runtime_service_url(base_url, "base_url")
             kwargs["base_url"] = base_url
-        extra = {}
+        # OpenRouter-specific request-body fields the OpenAI client does not
+        # know as named arguments, so they travel in extra_body.
+        extra_body: dict = {}
         if provider_order:
-            # OpenRouter's provider preferences are a request-body field the
-            # OpenAI client does not know, so they travel in extra_body.
-            extra["extra_body"] = {"provider": {"order": provider_order}}
+            extra_body["provider"] = {"order": provider_order}
+        if _openrouter_supports_disabling_reasoning(model):
+            # Thinking tokens are dead air on a voice call — they add latency to
+            # every turn without changing the tool call the model settles on.
+            extra_body["reasoning"] = {"enabled": False}
+        extra = {"extra_body": extra_body} if extra_body else {}
         return OpenRouterLLMService(
             api_key=api_key,
             settings=OpenRouterLLMSettings(model=model, temperature=0.1, extra=extra),
