@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Original geometric wireframe illustration: orbit coral">
+  <style>
+    .motion { transform-origin: 300px 300px; transition: transform .65s cubic-bezier(.2,.75,.2,1); }
+    .accent-fill { fill: #BC716B; transition: opacity .4s ease; }
+    svg:hover .motion { transform: rotate(7deg) scale(1.035); }
+    @media (prefers-reduced-motion: reduce) { .motion { transition: none; } }
+  </style>
+  <rect x="1" y="1" width="598" height="598" rx="28" fill="#F7F6F4" stroke="#E9E7E3"/>
+  
+    <g class="guides" fill="none" stroke="#C8C7C3" stroke-width="1.15">
+      <path d="M300 66V534" stroke-dasharray="2 5"/>
+      <path d="M66 300H534" stroke-dasharray="2 5"/>
+      <circle cx="300" cy="300" r="185" stroke-dasharray="2 5"/>
+      <path d="M169 169 431 431M431 169 169 431" stroke-dasharray="2 5"/>
+    </g>
+    <g class="motion" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="300" cy="300" rx="205" ry="82" transform="rotate(-27 300 300)" stroke="#777975" stroke-width="1.4"/>
+      <ellipse cx="300" cy="300" rx="205" ry="82" transform="rotate(27 300 300)" stroke="#BABBB7" stroke-width="1.2"/>
+      <circle cx="300" cy="300" r="86" stroke="#777975" stroke-width="1.5"/>
+      <ellipse cx="300" cy="300" rx="33" ry="86" stroke="#CFD0CD" stroke-width="1.1"/>
+      <path d="M214 300H386" stroke="#CFD0CD" stroke-width="1.1"/>
+      <circle class="accent-fill" cx="461" cy="224" r="8"/>
+      <circle cx="139" cy="376" r="5" stroke="#777975" stroke-width="1.4"/>
+    </g>
+</svg>

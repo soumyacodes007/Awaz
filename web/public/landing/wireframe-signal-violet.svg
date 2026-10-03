@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Original geometric wireframe illustration: signal violet">
+  <style>
+    .motion { transform-origin: 300px 300px; transition: transform .65s cubic-bezier(.2,.75,.2,1); }
+    .accent-fill { fill: #8E78A7; transition: opacity .4s ease; }
+    svg:hover .motion { transform: rotate(7deg) scale(1.035); }
+    @media (prefers-reduced-motion: reduce) { .motion { transition: none; } }
+  </style>
+  <rect x="1" y="1" width="598" height="598" rx="28" fill="#F7F6F4" stroke="#E9E7E3"/>
+  
+    <g class="guides" fill="none" stroke="#CAC9C7" stroke-width="1.15">
+      <circle cx="300" cy="300" r="210" stroke-dasharray="2 5"/>
+      <circle cx="300" cy="300" r="145" stroke-dasharray="2 5"/>
+      <path d="M300 60V540M60 300H540" stroke-dasharray="2 5"/>
+      <path d="M151 151 449 449M449 151 151 449" stroke-dasharray="2 5"/>
+    </g>
+    <g class="motion" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="300" cy="300" r="77" stroke="#767976" stroke-width="1.5"/>
+      <circle cx="300" cy="300" r="46" stroke="#BFC1BE" stroke-width="1.15"/>
+      <path d="M300 90 440 160 510 300 440 440 300 510 160 440 90 300 160 160Z" stroke="#8D908D" stroke-width="1.35"/>
+      <path d="M300 223 300 90M354 246 440 160M377 300H510M354 354 440 440M300 377V510M246 354 160 440M223 300H90M246 246 160 160" stroke="#CDD0CC" stroke-width="1.15"/>
+      <circle class="accent-fill" cx="300" cy="90" r="7"/>
+      <circle cx="440" cy="440" r="5" stroke="#767976" stroke-width="1.3"/>
+      <circle cx="90" cy="300" r="5" stroke="#767976" stroke-width="1.3"/>
+    </g>
+</svg>

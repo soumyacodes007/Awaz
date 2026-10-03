@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Original line art illustration: folded violet">
+  <style>
+    .guides { fill:none; stroke:#D1D0CC; stroke-width:1.15; stroke-dasharray:2 5; }
+    .main { fill:none; stroke:#7C807D; stroke-width:1.55; stroke-linecap:round; stroke-linejoin:round; }
+    .main .soft { stroke:#BCBFBB; stroke-width:1.2; }
+    .detail { fill:none; stroke:#7C807D; stroke-width:1.3; }
+    .accent { fill:#9B85A8; stroke:none; }
+    .motion { transform-origin:300px 300px; transition:transform .55s cubic-bezier(.2,.7,.2,1); }
+    svg:hover .motion { transform:translateY(-7px) scale(1.025); }
+    @media(prefers-reduced-motion:reduce) { .motion { transition:none; } }
+  </style>
+  <rect x="1" y="1" width="598" height="598" rx="28" fill="#F8F7F5" stroke="#E8E6E2"/>
+  
+      <g class="guides">
+        <path d="M90 156 310 88 516 176M90 440 310 508 516 420"/>
+        <path d="M90 156V440M516 176V420M310 88V508"/>
+      </g>
+      <g class="main motion">
+        <path d="M95 212 317 141 505 221 283 292Z"/>
+        <path d="M95 279 317 208 505 288 283 359Z"/>
+        <path d="M95 346 317 275 505 355 283 426Z"/>
+        <path class="soft" d="M95 212v28l188 80 222-71v-28M95 279v28l188 80 222-71v-28M95 346v28l188 80 222-71v-28"/>
+        <path class="soft" d="M283 292v28M283 359v28M283 426v28"/>
+        <path d="M259 190 316 172 363 192 306 210Z"/>
+      </g>
+      <g class="detail"><circle class="accent" cx="317" cy="141" r="6"/><path d="M307 102v24M285 471v24"/></g>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Original geometric wireframe illustration: cascade mint">
+  <style>
+    .motion { transform-origin: 300px 300px; transition: transform .65s cubic-bezier(.2,.75,.2,1); }
+    .accent-fill { fill: #5F9B8D; transition: opacity .4s ease; }
+    svg:hover .motion { transform: rotate(7deg) scale(1.035); }
+    @media (prefers-reduced-motion: reduce) { .motion { transition: none; } }
+  </style>
+  <rect x="1" y="1" width="598" height="598" rx="28" fill="#F7F6F4" stroke="#E9E7E3"/>
+  
+    <g class="guides" fill="none" stroke="#C9CAC6" stroke-width="1.15" stroke-dasharray="2 5">
+      <path d="M300 55V545"/>
+      <path d="M105 157 300 60 495 157M105 443 300 540 495 443"/>
+      <path d="M105 157V443M495 157V443"/>
+      <ellipse cx="300" cy="300" rx="220" ry="77"/>
+    </g>
+    <g class="motion" fill="none" stroke-linecap="round">
+      <ellipse cx="300" cy="188" rx="184" ry="66" stroke="#747A76" stroke-width="1.5"/>
+      <ellipse cx="300" cy="245" rx="160" ry="58" stroke="#B3B7B2" stroke-width="1.25"/>
+      <ellipse cx="300" cy="300" rx="136" ry="50" stroke="#D1D3D0" stroke-width="1.15"/>
+      <ellipse cx="300" cy="355" rx="112" ry="42" stroke="#B3B7B2" stroke-width="1.25"/>
+      <ellipse cx="300" cy="408" rx="88" ry="33" stroke="#747A76" stroke-width="1.5"/>
+      <path d="M116 188 212 408M484 188 388 408" stroke="#C8CBC7" stroke-width="1.1" stroke-dasharray="2 5"/>
+      <circle class="accent-fill" cx="300" cy="122" r="7"/>
+      <circle cx="300" cy="441" r="4" stroke="#747A76" stroke-width="1.2"/>
+    </g>
+</svg>

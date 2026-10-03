@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Original line art illustration: continuum mint">
+  <style>
+    .guides { fill:none; stroke:#D1D0CC; stroke-width:1.15; stroke-dasharray:2 5; }
+    .main { fill:none; stroke:#7C807D; stroke-width:1.55; stroke-linecap:round; stroke-linejoin:round; }
+    .main .soft { stroke:#BCBFBB; stroke-width:1.2; }
+    .detail { fill:none; stroke:#7C807D; stroke-width:1.3; }
+    .accent { fill:#6D9C8E; stroke:none; }
+    .motion { transform-origin:300px 300px; transition:transform .55s cubic-bezier(.2,.7,.2,1); }
+    svg:hover .motion { transform:translateY(-7px) scale(1.025); }
+    @media(prefers-reduced-motion:reduce) { .motion { transition:none; } }
+  </style>
+  <rect x="1" y="1" width="598" height="598" rx="28" fill="#F8F7F5" stroke="#E8E6E2"/>
+  
+      <g class="guides">
+        <path d="M71 429H529M92 120H508"/>
+        <path d="M110 120V465M490 120V465M300 70V515"/>
+        <path d="M110 429 300 113 490 429"/>
+      </g>
+      <g class="main motion">
+        <path d="M102 432C102 230 187 151 300 151S498 230 498 432"/>
+        <path class="soft" d="M143 432C143 257 201 195 300 195S457 257 457 432"/>
+        <path class="soft" d="M184 432C184 290 224 239 300 239S416 290 416 432"/>
+        <path d="M111 432H489M145 445H455M185 458H415"/>
+        <path d="M111 432V475M489 432V475M300 151V108"/>
+      </g>
+      <g class="detail"><circle class="accent" cx="300" cy="151" r="6"/><circle cx="111" cy="432" r="5"/><circle cx="489" cy="432" r="5"/></g>
+</svg>

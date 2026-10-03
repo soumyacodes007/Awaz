@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Original geometric wireframe illustration: prism ocean">
+  <style>
+    .motion { transform-origin: 300px 300px; transition: transform .65s cubic-bezier(.2,.75,.2,1); }
+    .accent-fill { fill: #5A87A1; transition: opacity .4s ease; }
+    svg:hover .motion { transform: rotate(7deg) scale(1.035); }
+    @media (prefers-reduced-motion: reduce) { .motion { transition: none; } }
+  </style>
+  <rect x="1" y="1" width="598" height="598" rx="28" fill="#F7F6F4" stroke="#E9E7E3"/>
+  
+    <g class="guides" fill="none" stroke="#C9C9C5" stroke-width="1.15" stroke-dasharray="2 5">
+      <path d="M300 68V532M70 300H530"/>
+      <path d="M300 82 490 190 490 410 300 518 110 410 110 190Z"/>
+      <path d="M300 82V300L110 410M300 300 490 410"/>
+    </g>
+    <g class="motion" fill="none" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M300 130 450 215V385L300 470 150 385V215Z" stroke="#727775" stroke-width="1.5"/>
+      <path d="M150 215 300 300 450 215M300 300V470" stroke="#A4A8A5" stroke-width="1.25"/>
+      <path d="M300 188 400 245V355L300 412 200 355V245Z" stroke="#C8CAC7" stroke-width="1.15"/>
+      <path d="M200 245 300 302 400 245M300 302V412" stroke="#C8CAC7" stroke-width="1.15"/>
+      <circle class="accent-fill" cx="300" cy="300" r="7"/>
+      <path d="M273 115H327M273 485H327M135 285V315M465 285V315" stroke="#777975" stroke-width="1.35"/>
+    </g>
+</svg>

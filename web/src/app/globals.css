@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* Type: --font-display-face / --font-body come from next/font in layout.tsx.
+   `inline` makes the font-* utilities use these var() references directly at
+   the element, instead of resolving them once on :root, where the next/font
+   variables may not exist (that silently fell back to the system font). */
+@theme inline {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-body), ui-sans-serif, sans-serif;
+}
+
+@theme {
+  /* Warm monochrome (ElevenLabs) */
+  --color-paper: #fdfcfc;
+  --color-ink: #141414;
+  --color-ink-soft: #59544f;
+  --color-ink-muted: #8a847c;
+  --color-line: #ebe7e3;
+
+  /* Accents (Sarvam hero glow + dark pill) */
+  --color-navy: #1b1c33;
+  --color-navy-soft: #2a2b4a;
+  --color-indigo-ink: #212191;
+  --color-saffron: #f7700c;
+  --color-periwinkle: #9fb3ff;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-fade-up: fade-up 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  --animate-gradient-pan: gradient-pan 12s ease-in-out infinite alternate;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-pulse-ring: pulse-ring 3.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes gradient-pan {
+    from {
+      background-position: 0% 50%;
+    }
+    to {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes pulse-ring {
+    from {
+      transform: scale(0.6);
+      opacity: 0.7;
+    }
+    to {
+      transform: scale(1.35);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Smooth scrolling is handled by Lenis (components/landing/SmoothScroll), so
+   native scroll-behavior stays at its default to avoid the two fighting. */
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-fade-up,
+  .animate-spin-slow,
+  .animate-pulse-ring,
+  .animate-gradient-pan {
+    animation: none;
+  }
+}

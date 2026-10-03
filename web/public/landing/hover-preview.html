@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Corner bloom SVG hover preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f5f6fa; font: 16px/1.4 system-ui, sans-serif; color: #252536; }
+    main { width: min(100%, 900px); padding: 36px 24px; }
+    h1 { margin: 0 0 6px; font-size: clamp(1.5rem, 4vw, 2.3rem); }
+    p { margin: 0 0 24px; color: #626375; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; }
+    .card { position: relative; min-height: 208px; overflow: hidden; border: 1px solid #e6e7ef; border-radius: 17px; background: #fff; box-shadow: 0 8px 26px #2828480a; }
+    .card img { position: absolute; top: -10px; right: -4px; width: 160px; height: 160px; transform-origin: 55% 14%; transition: transform 380ms cubic-bezier(.2,.8,.2,1), filter 380ms ease; }
+    .card:hover img, .card:focus-within img { transform: translateY(8px) rotate(-7deg) scale(1.13); filter: drop-shadow(0 12px 11px #1d1d4a24); }
+    .card span { position: absolute; left: 18px; bottom: 17px; font-weight: 650; }
+    @media (prefers-reduced-motion: reduce) { .card img { transition: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Corner bloom</h1>
+    <p>Four transparent SVGs inspired by the reference. Hover over a card to preview the movement.</p>
+    <div class="grid"><div class="card"><img src="corner-bloom-coral.svg" alt="Coral corner bloom"><span>Coral</span></div>
+<div class="card"><img src="corner-bloom-ocean.svg" alt="Ocean corner bloom"><span>Ocean</span></div>
+<div class="card"><img src="corner-bloom-violet.svg" alt="Violet corner bloom"><span>Violet</span></div>
+<div class="card"><img src="corner-bloom-mint.svg" alt="Mint corner bloom"><span>Mint</span></div></div>
+  </main>
+</body>
+</html>
