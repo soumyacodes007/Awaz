@@ -7,6 +7,42 @@
 @theme inline {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-face), var(--font-body), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* App (signed-in dashboard) tokens: shadcn's zinc palette, light. */
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #09090b;
+  --color-card: #ffffff;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-accent: #f4f4f5;
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+  --color-primary: #18181b;
+  --color-primary-foreground: #fafafa;
+  --color-ring: #a1a1aa;
+  --color-destructive: #dc2626;
+  --color-sidebar: #fafafa;
+}
+
+/* Everything inside the app uses Geist, like shadcn's own products. */
+.font-app {
+  font-family: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+}
+.font-app .font-display {
+  font-family: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Bare `border` utilities in the app pick up the token color, as in shadcn. */
+@layer base {
+  .font-app *,
+  .font-app ::before,
+  .font-app ::after {
+    border-color: var(--color-border);
+  }
 }
 
 @theme {
