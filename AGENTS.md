@@ -7,7 +7,7 @@ Dograh is a voice AI platform for building and deploying conversational AI agent
 ```
 dograh/
 ├── api/              # Backend - FastAPI application
-├── ui/               # Frontend - Next.js application
+├── web/              # Frontend - Awaz Next.js app (replaces Dograh's ui/)
 ├── scripts/          # Helper scripts for local development
 ├── docs/             # Mintlify documentation
 ├── pipecat/          # Pipecat framework (git submodule)
@@ -31,7 +31,7 @@ Contributor setup and service startup are documented in `docs/contribution/setup
 
 - `api/.env` - Backend environment variables. Source this when running repo-owned backend scripts against the dev DB (e.g. `python -m scripts.dump_docs_openapi`).
 - `api/.env.test` - Test-only environment variables. Source this when running pytest so tests hit the test DB and never the dev/prod credentials in `api/.env`.
-- `ui/.env` - Frontend environment variables
+- `web/.env.local` - Frontend environment variables
 
 Typical invocation:
 
