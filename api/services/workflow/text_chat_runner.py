@@ -33,12 +33,13 @@ from pipecat.processors.aggregators.llm_response_universal import (
     LLMContextAggregatorPair,
 )
 from pipecat.processors.frame_processor import FrameDirection, FrameProcessor
-from pipecat.utils.run_context import set_current_org_id
+from pipecat.utils.run_context import set_current_org_id, set_current_run_id
 
 from api.db import db_client
 from api.enums import WorkflowRunMode, WorkflowRunState
 from api.schemas.workflow_configurations import WorkflowConfigurationDefaults
 from api.services.configuration.registry import ServiceProviders
+from api.services.observability import local_trace
 from api.services.pipecat.audio_config import create_audio_config
 from api.services.pipecat.pipeline_builder import create_pipeline_task
 from api.services.pipecat.pipeline_metrics_aggregator import (
@@ -178,6 +179,7 @@ class TextChatTurnExecutionResult:
     initial_context: dict[str, Any]
     state: str
     is_completed: bool
+    local_trace: dict[str, Any] | None = None
 
 
 @dataclass
@@ -506,6 +508,7 @@ async def execute_text_chat_pending_turn(
     # webrtc_signaling; the text path previously skipped it, so its spans never
     # reached org-specific exporters).
     set_current_org_id(workflow.organization_id)
+    set_current_run_id(workflow_run_id)
 
     run_definition = workflow_run.definition
     run_configs = run_definition.workflow_configurations or {}
@@ -727,6 +730,7 @@ async def execute_text_chat_pending_turn(
         additional_span_attributes=trace_span_attributes,
     )
     runner_task = asyncio.create_task(run_pipeline_worker(task))
+    trace_snapshot = None
 
     engine.call_worker = task
     engine.set_audio_config(audio_config)
@@ -793,8 +797,11 @@ async def execute_text_chat_pending_turn(
                 await task.cancel(reason=TEXT_CHAT_INTERNAL_CANCEL_REASON)
             await runner_task
         finally:
-            await engine.close_mcp_sessions()
-            await engine.cleanup()
+            try:
+                await engine.close_mcp_sessions()
+                await engine.cleanup()
+            finally:
+                trace_snapshot = local_trace.finish(workflow_run_id)
 
     gathered_context = await engine.get_gathered_context()
     assistant_text = (
@@ -841,6 +848,7 @@ async def execute_text_chat_pending_turn(
             else WorkflowRunState.RUNNING.value
         ),
         is_completed=engine.is_call_disposed(),
+        local_trace=trace_snapshot,
     )
 
 
