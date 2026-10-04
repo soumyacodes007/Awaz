@@ -246,6 +246,10 @@ class WorkflowRunTextSessionClient(BaseDBClient):
             }
             workflow_run.state = state
             workflow_run.is_completed = True
+            workflow_run.extra = {
+                **(workflow_run.extra or {}),
+                "analysis_status": "pending",
+            }
 
             try:
                 await session.commit()
