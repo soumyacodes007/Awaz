@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { CopyButton, Switch, SwitchRow } from "@/components/app/client";
 import { btn, FormRow, inputCls } from "@/components/app/ui";
-import { type AgentFields, DEFAULT_WEBHOOK_PAYLOAD, type Webhook } from "@/lib/agent";
+import { type Agent, DEFAULT_WEBHOOK_PAYLOAD, type Webhook } from "@/lib/agent";
 
 import { type Configs, Section } from "./types";
 
@@ -88,7 +88,7 @@ function WebhookCard({
         </button>
       </div>
       <div className="grid gap-2 sm:grid-cols-[110px_minmax(0,1fr)]">
-        <select aria-label="Method" value={hook.method} onChange={(e) => onChange({ ...hook, method: e.target.value })} className={`${inputCls} h-10`}>
+        <select aria-label="Method" value={hook.method} onChange={(e) => onChange({ ...hook, method: e.target.value as Webhook["method"] })} className={`${inputCls} h-10`}>
           {["POST", "PUT", "PATCH", "GET", "DELETE"].map((m) => (
             <option key={m}>{m}</option>
           ))}
@@ -105,8 +105,8 @@ function WebhookCard({
       <FormRow label="Authentication" htmlFor={`cred-${hook.id}`}>
         <select
           id={`cred-${hook.id}`}
-          value={hook.credentialUuid ?? ""}
-          onChange={(e) => onChange({ ...hook, credentialUuid: e.target.value || null })}
+          value={hook.credential_uuid ?? ""}
+          onChange={(e) => onChange({ ...hook, credential_uuid: e.target.value || null })}
           className={`${inputCls} h-10`}
         >
           <option value="">None</option>
@@ -145,34 +145,30 @@ function WebhookCard({
 
 export function AdvancedTab({
   agentId,
-  fields,
-  set,
+  agent,
+  update,
   configs,
   setConfig,
-  trigger,
-  onTrigger,
-  webhooks,
-  onWebhooks,
   credentials,
   onArchive,
   readOnly,
 }: {
   agentId: number;
-  fields: AgentFields;
-  set: <K extends keyof AgentFields>(k: K, v: AgentFields[K]) => void;
+  agent: Agent;
+  update: (patch: Partial<Agent>) => void;
   configs: Configs;
   setConfig: (key: string, value: unknown) => void;
-  trigger: { enabled: boolean; path: string | null } | null;
-  onTrigger: (enabled: boolean) => void;
-  webhooks: Webhook[];
-  onWebhooks: (v: Webhook[]) => void;
   credentials: { uuid: string; name: string }[];
   onArchive: () => void;
   readOnly: boolean;
 }) {
+  const trigger = agent.api_trigger;
+  const onTrigger = (enabled: boolean) => update({ api_trigger: { ...trigger, enabled } });
+  const webhooks = agent.webhooks;
+  const onWebhooks = (v: Webhook[]) => update({ webhooks: v });
   const [origin, setOrigin] = useState("");
   useEffect(() => setOrigin(window.location.origin), []);
-  const url = trigger?.path ? `${origin}/api/v1/public/agent/${trigger.path}` : null;
+  const url = trigger.path ? `${origin}/api/v1/public/agent/${trigger.path}` : null;
   const curl = url
     ? `curl -X POST ${url} \\\n  -H "X-API-Key: $AWAZ_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"phone_number": "+919876543210", "initial_context": {"first_name": "Asha"}}'`
     : "";
@@ -256,19 +252,19 @@ export function AdvancedTab({
           <SwitchRow
             title="Wait before speaking on outbound calls"
             body="Listen first so voicemail and call screening are handled properly."
-            checked={fields.delayedStart}
-            onChange={(v) => set("delayedStart", v)}
+            checked={agent.delayed_start}
+            onChange={(v) => update({ delayed_start: v })}
           />
-          {fields.delayedStart ? (
+          {agent.delayed_start ? (
             <NumberField
               id="delay"
               label="Listening window (seconds)"
-              value={fields.delayedStartDuration}
+              value={agent.delayed_start_duration}
               fallback={1.2}
               min={0.1}
               max={10}
               step={0.1}
-              onChange={(v) => set("delayedStartDuration", v ?? null)}
+              onChange={(v) => update({ delayed_start_duration: v ?? null })}
             />
           ) : null}
         </div>
@@ -296,9 +292,9 @@ export function AdvancedTab({
             .
           </>
         }
-        actions={<Switch checked={Boolean(trigger?.enabled)} onChange={onTrigger} label="API trigger" />}
+        actions={<Switch checked={trigger.enabled} onChange={onTrigger} label="API trigger" />}
       >
-        {trigger?.enabled ? (
+        {trigger.enabled ? (
           url ? (
             <div className="space-y-3">
               <div className="flex items-center gap-2 rounded-md bg-muted px-3.5 py-2.5 font-mono text-[12.5px] text-foreground border">
@@ -339,7 +335,7 @@ export function AdvancedTab({
                   enabled: true,
                   method: "POST",
                   url: "",
-                  credentialUuid: null,
+                  credential_uuid: null,
                   headers: [],
                   payload: DEFAULT_WEBHOOK_PAYLOAD,
                 },
