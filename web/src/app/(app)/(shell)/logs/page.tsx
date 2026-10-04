@@ -1,103 +1,98 @@
-import { ScrollText } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { getUsageHistoryApiV1OrganizationsUsageRunsGet, getWorkflowRunApiV1WorkflowWorkflowIdRunsRunIdGet, getWorkflowsApiV1WorkflowFetchGet } from "@/client";
-import { PageHeader } from "@/components/app/PageHeader";
-import { RunFilterBar } from "@/components/app/RunFilterBar";
-import { Card, EmptyState } from "@/components/app/ui";
-import { ago, duration } from "@/lib/format";
-import { eventsOf } from "@/lib/latency";
-import { channelOf, filterParam, parseFilters } from "@/lib/runs";
+import {
+  apiLogsApiV1LogsApiGet,
+  listCallsApiV1LogsCallsGet,
+  listChatsApiV1LogsChatsGet,
+  listPhoneNumbersApiV1OrganizationsTelephonyConfigsConfigIdPhoneNumbersGet,
+  listTelephonyConfigurationsApiV1OrganizationsTelephonyConfigsGet,
+  sessionsApiV1LogsSessionsGet,
+  webhooksApiV1LogsWebhooksGet,
+  workflowOptionsApiV1LogsWorkflowsGet,
+} from "@/client";
+import { LOG_TABS, type LogsTab, RANGES, type RangeId } from "@/lib/logs";
 import { authHeaders, ensureAuthorized } from "@/lib/server-api";
 
-import { EventLog } from "./EventLog";
+import { LogsView } from "./LogsView";
 
 export const metadata: Metadata = { title: "Logs | Awaz" };
 
-export default async function LogsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+type SP = Record<string, string | string[] | undefined>;
+const one = (sp: SP, k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
+const list = (sp: SP, k: string) => (one(sp, k) ?? "").split(",").filter(Boolean);
+const ints = (sp: SP, k: string) => list(sp, k).map(Number).filter((n) => Number.isInteger(n) && n > 0);
+
+export default async function LogsPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
   const headers = await authHeaders();
-  const [runs, agents] = await Promise.all([
-    getUsageHistoryApiV1OrganizationsUsageRunsGet({ headers, query: { page: 1, limit: 40, filters: filterParam(parseFilters(sp)) } }),
-    getWorkflowsApiV1WorkflowFetchGet({ headers }),
-  ]);
-  ensureAuthorized(runs);
-  const list = runs.data?.runs ?? [];
 
-  const runParam = typeof sp.run === "string" ? Number(sp.run) : null;
-  const selected = list.find((r) => r.id === runParam) ?? (runParam ? null : list[0]) ?? null;
-  const selectedWorkflow = selected?.workflow_id ?? (typeof sp.agent === "string" ? Number(sp.agent) : null);
-  const selectedId = selected?.id ?? runParam;
-  const detail =
-    selectedId && selectedWorkflow
-      ? await getWorkflowRunApiV1WorkflowWorkflowIdRunsRunIdGet({ headers, path: { workflow_id: selectedWorkflow, run_id: selectedId } })
-      : null;
+  const tab: LogsTab = LOG_TABS.some((t) => t.id === one(sp, "tab")) ? (one(sp, "tab") as LogsTab) : "calls";
+  const range: RangeId = RANGES.some((r) => r.id === one(sp, "range")) ? (one(sp, "range") as RangeId) : "30d";
+  const hours = RANGES.find((r) => r.id === range)!.hours;
+  const start_at = hours ? new Date(Date.now() - hours * 3600_000).toISOString() : undefined;
+  const page = Math.max(1, Number(one(sp, "page")) || 1);
+  const limit = [10, 25, 50, 100].includes(Number(one(sp, "limit"))) ? Number(one(sp, "limit")) : 25;
+  const runId = Number(one(sp, "id")) || undefined;
 
-  const link = (id: number) => {
-    const q = new URLSearchParams();
-    for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "run") q.set(k, v);
-    q.set("run", String(id));
-    return `/logs?${q}`;
+  const callQuery = {
+    start_at,
+    page,
+    limit,
+    run_id: runId,
+    workflow_ids: ints(sp, "agents"),
+    channels: list(sp, "channels").filter((c): c is "telephony" | "web" | "chat" => ["telephony", "web", "chat"].includes(c)),
+    directions: list(sp, "directions").filter((d): d is "inbound" | "outbound" => d === "inbound" || d === "outbound"),
+    ended_reasons: list(sp, "ended"),
+    customer_number: one(sp, "customer"),
+    assistant_number: one(sp, "number"),
+    completed: one(sp, "status") === "completed" ? true : one(sp, "status") === "in_progress" ? false : undefined,
+    min_duration: one(sp, "min") ? Number(one(sp, "min")) : undefined,
+    max_duration: one(sp, "max") ? Number(one(sp, "max")) : undefined,
+    sort_by: one(sp, "sort") === "duration" ? ("duration" as const) : ("created_at" as const),
+    sort_order: one(sp, "order") === "asc" ? ("asc" as const) : ("desc" as const),
   };
+  const opQuery = { start_at, page, limit, run_id: tab !== "api" ? runId : undefined, status: one(sp, "opstatus") };
+
+  const [workflows, telephony, data] = await Promise.all([
+    workflowOptionsApiV1LogsWorkflowsGet({ headers, query: { limit: 50 } }),
+    listTelephonyConfigurationsApiV1OrganizationsTelephonyConfigsGet({ headers }),
+    tab === "calls"
+      ? listCallsApiV1LogsCallsGet({ headers, query: callQuery })
+      : tab === "chat"
+        ? listChatsApiV1LogsChatsGet({ headers, query: { ...callQuery, channels: [] } })
+        : tab === "sessions"
+          ? sessionsApiV1LogsSessionsGet({ headers, query: opQuery })
+          : tab === "webhooks"
+            ? webhooksApiV1LogsWebhooksGet({ headers, query: opQuery })
+            : apiLogsApiV1LogsApiGet({ headers, query: opQuery }),
+  ]);
+  ensureAuthorized(workflows);
+
+  const numbers = (
+    await Promise.all(
+      (telephony.data?.configurations ?? []).map((c) =>
+        listPhoneNumbersApiV1OrganizationsTelephonyConfigsConfigIdPhoneNumbersGet({ headers, path: { config_id: c.id } }).then((r) =>
+          (r.data?.phone_numbers ?? []).map((n) => n.address),
+        ),
+      ),
+    )
+  ).flat();
+
+  const result = data.data as { items: unknown[]; total_count: number; total_pages: number; snapshot_at?: string } | undefined;
 
   return (
-    <>
-      <PageHeader title="Logs" sub="Every event inside a call: speech, tool calls, per-stage latency and errors." />
-      <div className="space-y-4 px-6 py-5 sm:px-8">
-        <RunFilterBar agents={(agents.data ?? []).map((a) => ({ id: a.id, name: a.name }))} show={["agent", "channel", "date"]} />
-        {list.length || detail?.data ? (
-          <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)]">
-            <Card className="max-h-[72vh] overflow-y-auto p-1.5">
-              <ul className="space-y-0.5">
-                {list.map((r) => {
-                  const on = r.id === selectedId;
-                  return (
-                    <li key={r.id}>
-                      <Link
-                        href={link(r.id)}
-                        scroll={false}
-                        className={`block rounded-md px-3 py-2.5 transition ${on ? "bg-muted border border-foreground/20" : "hover:bg-accent"}`}
-                      >
-                        <span className="flex items-center justify-between text-[13.5px] text-foreground">
-                          <span className="truncate">{r.workflow_name ?? `Agent ${r.workflow_id}`}</span>
-                          <span className="shrink-0 text-[12px] text-muted-foreground tabular-nums">#{r.id}</span>
-                        </span>
-                        <span className="mt-0.5 flex items-center justify-between text-[12px] text-muted-foreground">
-                          <span>
-                            {channelOf(r.mode).label} · {duration(r.call_duration_seconds)}
-                          </span>
-                          <span>{ago(r.created_at)}</span>
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Card>
-            <div className="min-w-0">
-              {detail?.data ? (
-                <EventLog
-                  key={detail.data.id}
-                  runId={detail.data.id}
-                  workflowId={detail.data.workflow_id}
-                  startedAt={detail.data.created_at}
-                  events={eventsOf(detail.data.logs)}
-                  telephony={((detail.data.logs as Record<string, unknown> | null)?.telephony_status_callbacks as Record<string, unknown>[] | undefined) ?? []}
-                />
-              ) : (
-                <Card>
-                  <EmptyState icon={ScrollText} title="Pick a call" body="Choose a call on the left to see its events." />
-                </Card>
-              )}
-            </div>
-          </div>
-        ) : (
-          <Card>
-            <EmptyState icon={ScrollText} title="No calls yet" body="Logs appear here for every call and test chat." />
-          </Card>
-        )}
-      </div>
-    </>
+    <LogsView
+      tab={tab}
+      items={result?.items ?? []}
+      total={result?.total_count ?? 0}
+      totalPages={result?.total_pages ?? 0}
+      page={page}
+      limit={limit}
+      snapshotAt={result?.snapshot_at ?? new Date().toISOString()}
+      error={data.error ? "Couldn't load logs. Is the backend running?" : null}
+      agents={workflows.data?.items ?? []}
+      numbers={[...new Set(numbers)]}
+      exportQuery={{ ...callQuery, page: undefined, limit: undefined, channels: tab === "chat" ? ["chat"] : callQuery.channels }}
+    />
   );
 }
