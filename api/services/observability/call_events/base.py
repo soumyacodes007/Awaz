@@ -33,7 +33,7 @@ class CallEventSinkRegistration:
 
 @dataclass
 class EventBuffer:
-    """Bound memory during a call; never persist events in workflow logs."""
+    """Bound memory during a call for local diagnostics and optional exports."""
 
     max_events: int = 20_000
     max_bytes: int = 4 * 1024 * 1024
