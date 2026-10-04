@@ -34,8 +34,8 @@ export function CallsTab({ agentId, runs, total }: { agentId: number; runs: Edit
         <p className="text-[13.5px] text-muted-foreground">
           Showing {runs.length} of {total} calls
         </p>
-        <Link href={`/runs?agent=${agentId}`} className="text-[13px] text-foreground hover:underline">
-          Open in Agent runs
+        <Link href={`/logs?agents=${agentId}`} className="text-[13px] text-foreground hover:underline">
+          Open in Logs
         </Link>
       </div>
       <Table
@@ -52,7 +52,7 @@ export function CallsTab({ agentId, runs, total }: { agentId: number; runs: Edit
         {runs.map((r) => (
           <tr key={r.id} className={`${tr} group`}>
             <td className={td}>
-              <Link href={`/runs/${agentId}/${r.id}`} className="block">
+              <Link href={`/logs?call=${r.id}`} className="block">
                 <span className="block text-foreground">#{r.id}</span>
                 <span className="text-[12px] text-muted-foreground">{dateTime(r.createdAt)}</span>
               </Link>
@@ -68,7 +68,7 @@ export function CallsTab({ agentId, runs, total }: { agentId: number; runs: Edit
               {r.disposition ? <Badge>{humanize(r.disposition)}</Badge> : r.completed ? <span className="text-muted-foreground/70">–</span> : <Badge tone="blue">In progress</Badge>}
             </td>
             <td className={td}>
-              <Link href={`/runs/${agentId}/${r.id}`} aria-label={`Open call ${r.id}`} className="text-muted-foreground/70 transition group-hover:text-foreground">
+              <Link href={`/logs?call=${r.id}`} aria-label={`Open call ${r.id}`} className="text-muted-foreground/70 transition group-hover:text-foreground">
                 <ChevronRight className="size-4" />
               </Link>
             </td>
