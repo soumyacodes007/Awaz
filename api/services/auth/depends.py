@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, Query, WebSocket
+from fastapi import Depends, Header, HTTPException, Query, Request, WebSocket
 from loguru import logger
 
 from api.constants import AUTH_PROVIDER
@@ -30,7 +30,7 @@ async def require_local_auth() -> None:
         raise HTTPException(status_code=404, detail="Not found")
 
 
-async def get_user(
+async def _resolve_user(
     authorization: Annotated[str | None, Header()] = None,
     x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
 ) -> UserModel:
@@ -150,6 +150,17 @@ async def get_user(
     )
 
     return user_model
+
+
+async def get_user(
+    authorization: Annotated[str | None, Header()] = None,
+    x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
+    request: Request = None,
+) -> UserModel:
+    user = await _resolve_user(authorization, x_api_key)
+    if request is not None and user.selected_organization_id:
+        request.state.organization_id = user.selected_organization_id
+    return user
 
 
 def _sync_created_organization_to_posthog(
