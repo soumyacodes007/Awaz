@@ -36,6 +36,8 @@ from api.constants import REDIS_URL
 from api.errors.mps import MPS_UNAVAILABLE_PUBLIC_MESSAGE, MPSUnavailableError
 from api.mcp_server import mcp
 from api.routes.main import router as main_router
+from api.services.observability.api_logs import APIRequestLogMiddleware
+from api.services.observability.api_logs import writer as api_log_writer
 from api.services.pipecat.tracing_config import (
     handle_langfuse_sync,
     load_all_org_langfuse_credentials,
@@ -77,6 +79,7 @@ async def lifespan(app: FastAPI):
         )
 
         call_event_delivery.start()
+        api_log_writer.start()
 
         # Event-loop lag gauge — per-pod saturation signal read off
         # /health/active-calls during autoscaling load tests.
@@ -90,6 +93,7 @@ async def lifespan(app: FastAPI):
             yield  # Run app
         finally:
             logger.info("Starting graceful shutdown...")
+            await api_log_writer.shutdown()
             await call_event_delivery.shutdown()
             try:
                 await sync_manager.stop()
@@ -112,6 +116,7 @@ app = FastAPI(
         {"url": "http://localhost:8000", "description": "Local development"},
     ],
 )
+app.add_middleware(APIRequestLogMiddleware)
 
 
 @app.exception_handler(MPSUnavailableError)
