@@ -1,6 +1,7 @@
 """Connect canonical diagnostics to the existing call observation paths."""
 
 import asyncio
+from dataclasses import asdict
 
 from loguru import logger
 
@@ -28,6 +29,7 @@ class CallEventsSession:
         self._subscriptions = []
         self._task = None
         self._monitor = None
+        self.snapshot = None
 
     def attach(self, task, user_aggregator, monitor):
         self._task = task
@@ -67,6 +69,7 @@ class CallEventsSession:
     async def finish(self, gathered_context=None):
         try:
             await self._finish(gathered_context)
+            return self.snapshot
         except Exception as exc:
             logger.warning(
                 "Call event finalization failed for org {} ({})",
@@ -130,33 +133,40 @@ class CallEventsSession:
                     self.buffer.dropped,
                     self.organization_id,
                 )
-            delivery.submit(
-                self.organization_id,
-                self.settings,
-                self.buffer.seal(),
-                self.buffer.size_bytes,
-            )
+            events = self.buffer.seal()
+            self.snapshot = {
+                "events": [asdict(event) for event in events],
+                "dropped_events": self.buffer.dropped,
+            }
+            if self.settings is not None:
+                delivery.submit(
+                    self.organization_id, self.settings, events, self.buffer.size_bytes
+                )
 
 
 async def create_session(*, organization_id, run_id, workflow_id, engine):
+    settings = None
     try:
         async with asyncio.timeout(2):
             settings = await load_settings(organization_id)
         if not settings.enabled or not settings.sink_type:
-            return None
+            settings = None
         # Validate locally; no sink client or network I/O during capture.
-        registration(settings.sink_type).config_model.model_validate(settings.config)
-        return CallEventsSession(
-            settings=settings,
-            organization_id=organization_id,
-            run_id=run_id,
-            workflow_id=workflow_id,
-            engine=engine,
-        )
+        if settings is not None:
+            registration(settings.sink_type).config_model.model_validate(
+                settings.config
+            )
     except Exception as exc:
         logger.warning(
             "Call event collection unavailable for org {} ({})",
             organization_id,
             type(exc).__name__,
         )
-        return None
+        settings = None
+    return CallEventsSession(
+        settings=settings,
+        organization_id=organization_id,
+        run_id=run_id,
+        workflow_id=workflow_id,
+        engine=engine,
+    )
