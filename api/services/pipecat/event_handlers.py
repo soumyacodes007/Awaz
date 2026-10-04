@@ -1,4 +1,5 @@
 import asyncio
+from datetime import UTC, datetime
 
 from loguru import logger
 
@@ -214,6 +215,7 @@ def register_event_handlers(
     @transport.event_handler("on_client_connected")
     async def on_client_connected(_transport, _participant):
         logger.debug("In on_client_connected callback handler")
+        in_memory_audio_buffers.started_at = datetime.now(UTC).isoformat()
         await audio_buffer.start_recording()
         ready_state["client_connected"] = True
         await maybe_trigger_initial_response()
@@ -436,6 +438,7 @@ def register_event_handlers(
             gathered_context=gathered_context,
             is_completed=True,
             state=WorkflowRunState.COMPLETED.value,
+            extra={"analysis_status": "pending"},
         )
         await notify_campaign_call_completed(
             workflow_run.campaign_id if workflow_run else None, workflow_run_id
@@ -448,10 +451,24 @@ def register_event_handlers(
         )
 
         logs_update: dict[str, object] = {}
+        from api.services.observability import local_trace
+
+        trace_snapshot = local_trace.finish(workflow_run_id)
+        if trace_snapshot is not None:
+            logs_update["local_trace"] = trace_snapshot
+        if call_events_session is not None and getattr(
+            call_events_session, "snapshot", None
+        ):
+            logs_update["diagnostics"] = call_events_session.snapshot
         if not in_memory_logs_buffer.is_empty:
             try:
                 feedback_events = in_memory_logs_buffer.get_events()
                 logs_update["realtime_feedback_events"] = feedback_events
+                logs_update["realtime_feedback_meta"] = {
+                    "dropped_events": getattr(
+                        in_memory_logs_buffer, "dropped_events", 0
+                    )
+                }
                 logger.debug(
                     f"Saved {len(feedback_events)} feedback events to workflow run logs"
                 )
@@ -461,6 +478,12 @@ def register_event_handlers(
             logger.info("Logs buffer is empty, skipping save")
 
         logs_update.update(integration_logs)
+
+        if in_memory_audio_buffers.started_at:
+            await db_client.update_workflow_run(
+                run_id=workflow_run_id,
+                extra={"recording_started_at": in_memory_audio_buffers.started_at},
+            )
 
         if logs_update:
             try:
