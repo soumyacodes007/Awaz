@@ -143,23 +143,23 @@ async def test_existing_observer_feeds_separate_recorder_before_rtf_filters():
     await recorder.cleanup()
 
 
-async def test_disabled_and_invalid_config_do_not_affect_call(monkeypatch):
+async def test_disabled_export_and_invalid_config_keep_local_capture(monkeypatch):
     monkeypatch.setattr(
         runtime, "load_settings", AsyncMock(return_value=CallEventsSettings())
     )
-    assert (
-        await runtime.create_session(
-            organization_id=7, run_id=1, workflow_id=2, engine=None
-        )
-        is None
+    session = await runtime.create_session(
+        organization_id=7, run_id=1, workflow_id=2, engine=None
     )
+    assert session.settings is None
+    snapshot = await session.finish({})
+    assert snapshot["events"][-1]["event"] == "call_ended"
     runtime.load_settings.side_effect = RuntimeError("database unavailable")
-    assert (
-        await runtime.create_session(
-            organization_id=7, run_id=1, workflow_id=2, engine=None
-        )
-        is None
+    session = await runtime.create_session(
+        organization_id=7, run_id=1, workflow_id=2, engine=None
     )
+    assert session.settings is None
+    snapshot = await session.finish({})
+    assert snapshot["events"][-1]["event"] == "call_ended"
 
 
 def test_current_playback_preserves_legacy_mute_state_values():
