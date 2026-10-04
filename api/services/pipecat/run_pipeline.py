@@ -1319,11 +1319,35 @@ async def _run_pipeline_impl(
         # scopes opened by MCPClient.start() in engine.initialize() are
         # task-affine; this finally runs in the same task as initialize(),
         # whereas engine.cleanup() runs in a pipecat event-handler task.
+        from api.services.observability import local_trace
+
+        trace_snapshot = local_trace.finish(workflow_run_id)
+        if trace_snapshot is not None and (
+            trace_snapshot["spans"] or trace_snapshot["dropped_spans"]
+        ):
+            try:
+                found, previous = await db_client.get_call_log_payload(
+                    workflow_run_id, workflow.organization_id, "trace"
+                )
+                if found:
+                    await db_client.update_workflow_run(
+                        run_id=workflow_run_id,
+                        logs={
+                            "local_trace": local_trace.merge(previous, trace_snapshot)
+                        },
+                    )
+            except (Exception, asyncio.CancelledError):
+                logger.warning("Could not persist final local trace")
         if call_events_session is not None:
             # Fallback for cancellation or failures in unrelated completion
             # work. Normal completion already sealed this session.
             try:
                 await call_events_session.finish()
+                if getattr(call_events_session, "snapshot", None):
+                    await db_client.update_workflow_run(
+                        run_id=workflow_run_id,
+                        logs={"diagnostics": call_events_session.snapshot},
+                    )
             except (Exception, asyncio.CancelledError) as exc:
                 # Diagnostic failures must not skip MCP or observer cleanup.
                 logger.warning(
