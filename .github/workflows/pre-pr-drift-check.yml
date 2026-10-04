@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "api/**"
-      - "ui/**"
+      - "web/**"
       - "pipecat/**"
       - "scripts/dump_docs_openapi.py"
       - "scripts/format.sh"
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: ui/package-lock.json
+          cache-dependency-path: web/package-lock.json
 
       - name: Create Python virtual environment
         run: |
@@ -47,8 +47,8 @@ jobs:
       - name: Install api and pipecat dependencies
         run: ./scripts/setup_requirements.sh --dev
 
-      - name: Install ui dependencies
-        working-directory: ui
+      - name: Install web dependencies
+        working-directory: web
         run: npm ci
 
       - name: Run scripts/format.sh
@@ -64,8 +64,8 @@ jobs:
 
       - name: Check for UI lint drift
         run: |
-          if ! git diff --exit-code ui; then
-            echo "::error::UI files have outstanding lint fixes. Run 'npm run fix-lint' inside ui/ locally and commit the result before raising the PR."
+          if ! git diff --exit-code web; then
+            echo "::error::Web files have outstanding lint fixes. Run 'npm run lint -- --fix' inside web/ locally and commit the result before raising the PR."
             exit 1
           fi
           echo "UI lint is clean."
