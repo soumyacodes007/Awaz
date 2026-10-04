@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import {
+  getAgentApiV1AgentsAgentIdGet,
   getModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2Get,
   getModelConfigurationV2DefaultsApiV1OrganizationsModelConfigurationsV2DefaultsGet,
+  getNodeTypeApiV1NodeTypesNameGet,
   getPreferencesApiV1OrganizationsPreferencesGet,
-  getWorkflowApiV1WorkflowFetchWorkflowIdGet,
   getWorkflowRunsApiV1WorkflowWorkflowIdRunsGet,
   listCredentialsApiV1CredentialsGet,
   listDocumentsApiV1KnowledgeBaseDocumentsGet,
@@ -13,7 +14,7 @@ import {
   listTelephonyConfigurationsApiV1OrganizationsTelephonyConfigsGet,
   listToolsApiV1ToolsGet,
 } from "@/client";
-import { asDefinition } from "@/lib/agent";
+import { toAgent } from "@/lib/agent";
 import { eventsOf, summarize } from "@/lib/latency";
 import type { Defaults, Effective, ModelConfigV2 } from "@/lib/models";
 import { authHeaders, ensureAuthorized } from "@/lib/server-api";
@@ -27,8 +28,8 @@ export default async function AgentPage({ params }: { params: Promise<{ id: stri
   if (!Number.isInteger(id)) notFound();
   const headers = await authHeaders();
 
-  const [wf, tools, docs, clips, creds, model, defaults, runs, telephony, prefs] = await Promise.all([
-    getWorkflowApiV1WorkflowFetchWorkflowIdGet({ headers, path: { workflow_id: id } }),
+  const [res, tools, docs, clips, creds, model, defaults, runs, telephony, prefs, qaSpec] = await Promise.all([
+    getAgentApiV1AgentsAgentIdGet({ headers, path: { agent_id: id } }),
     listToolsApiV1ToolsGet({ headers, query: { status: "active" } }),
     listDocumentsApiV1KnowledgeBaseDocumentsGet({ headers, query: { limit: 200 } }),
     listRecordingsApiV1WorkflowRecordingsGet({ headers }),
@@ -38,25 +39,28 @@ export default async function AgentPage({ params }: { params: Promise<{ id: stri
     getWorkflowRunsApiV1WorkflowWorkflowIdRunsGet({ headers, path: { workflow_id: id }, query: { page: 1, limit: 25 } }),
     listTelephonyConfigurationsApiV1OrganizationsTelephonyConfigsGet({ headers }),
     getPreferencesApiV1OrganizationsPreferencesGet({ headers }),
+    getNodeTypeApiV1NodeTypesNameGet({ headers, path: { name: "qa" } }),
   ]);
-  ensureAuthorized(wf);
-  if (!wf.data) notFound();
-  const w = wf.data;
+  ensureAuthorized(res);
+  if (!res.data) notFound();
+  const a = res.data;
 
   const runList = runs.data?.runs ?? [];
   const latency = summarize(runList.flatMap((r) => eventsOf(r.logs)));
 
   return (
     <AgentEditor
-      key={w.id}
+      key={a.id}
       agent={{
-        id: w.id,
-        name: w.name,
-        uuid: w.workflow_uuid ?? null,
-        versionNumber: w.version_number ?? null,
-        versionStatus: w.version_status ?? null,
-        definition: asDefinition(w.workflow_definition),
-        configs: (w.workflow_configurations ?? {}) as Record<string, unknown>,
+        id: a.id,
+        name: a.name,
+        uuid: a.uuid,
+        versionNumber: a.version_number,
+        versionStatus: a.version_status,
+        kind: a.kind,
+        multiStepNodes: a.multi_step_nodes ?? 0,
+        spec: toAgent(a.agent),
+        configs: a.settings,
       }}
       tools={(tools.data ?? []).map((t) => ({ uuid: t.tool_uuid, name: t.name, description: t.description, category: t.category }))}
       documents={(docs.data?.documents ?? []).map((d) => ({ uuid: d.document_uuid, name: d.filename, status: d.processing_status }))}
@@ -81,6 +85,9 @@ export default async function AgentPage({ params }: { params: Promise<{ id: stri
       latency={latency}
       telephony={(telephony.data?.configurations ?? []).map((c) => ({ id: c.id, name: c.name, ready: c.is_ready_for_outbound ?? true }))}
       testPhone={prefs.data?.test_phone_number ?? null}
+      qaDefaultPrompt={String(
+        ((qaSpec.data as { properties?: { name: string; default?: unknown }[] } | undefined)?.properties ?? []).find((p) => p.name === "qa_system_prompt")?.default ?? "",
+      )}
     />
   );
 }
