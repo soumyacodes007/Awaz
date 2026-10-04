@@ -29,7 +29,7 @@ project, so the clash does not matter.
 |---|---|
 | Build on Dograh, not from scratch or on LiveKit | Dograh already has telephony (Vobiz, Exotel, Plivo, Twilio, SIP), campaigns, tools, knowledge base and a FastAPI backend on Pipecat. Pipecat handles phone and WebSocket transports directly; LiveKit's room model adds a SIP bridge for phone calls. |
 | Fork with full git history | Keeps upstream merges possible (`upstream` remote) and shows the work clearly on top of Dograh. |
-| New frontend in `web/`, old `ui/` kept for now | The old Dograh UI stays runnable for side-by-side comparison while pages are rebuilt. It can be deleted once nothing depends on it (open question, see section 11). |
+| New frontend in `web/`; old `ui/` deleted (2026-10-05) | Everything moved to `web/`. The source is gone; format/pre-commit/worktree scripts and the CI lint-drift and image-build workflows now point at `web/`. The upstream `ui` compose service is parked behind the `legacy-ui` profile. Still referencing `ui/`: `scripts/setup_remote.sh`, `setup_fork.sh`, `worktree-sync-env.sh` and nginx's remote template (remote deploys need a `web/` image first). |
 | Own backend features go in new modules under `api/services/` | Tracing, evals and CRM connectors later, kept separate from Dograh code to ease upstream merges. |
 | Replace Pipecat pieces gradually | Later phase: swap parts of the pipeline for our own engine, one at a time, guided by a `PROBLEMS.md` log of real issues hit while building. |
 | **No workflow canvas; agents are single prompts** | See section 6. Vapi retired its visual Workflows in favour of Assistants and Squads because LLMs don't reliably track which node they are in. |
@@ -59,7 +59,11 @@ wsl -u root -e bash -lc "systemctl stop redis-server postgresql"
 wsl -e bash -lc "cd /mnt/c/Users/soumy/Desktop/voice-agent/dograh && ./restart-dograh.sh"
 ```
 
-- API on `:8000`, old UI on `:3010`, MinIO on `:9000`.
+- API on `:8000`, MinIO on `:9000`. The frontend is `web/` on `:3000` (below).
+- The api runs **`awaz-api:local`**: the published image plus `api/requirements.txt`
+  installed with `--no-deps` (`deploy/local/api.Dockerfile`). The restart script
+  rebuilds it (cached). `--no-deps` matters: resolving deps lets `tuner-pipecat-sdk`
+  pull `pipecat-ai` from PyPI over Dograh's forked Pipecat and the api won't start.
 - Ubuntu's native Postgres and Redis grab 5432/6379 and come back on every WSL
   boot. Preference: **stop them**, don't remap Dograh's ports.
 - **WSL shuts its VM down when no WSL session is open**, which stops every
@@ -118,10 +122,17 @@ Awaz hides the graph completely:
 - **Old multi-step agents** show a banner with "Convert to single prompt", which
   merges every step's prompt into sections of one prompt and unions the tools
   and documents. Saved as a draft; the published version keeps working.
-- All of this lives in **`web/src/lib/agent.ts`**. Nothing else in the frontend
-  touches nodes.
-- The engine is unchanged; dropping the graph format entirely is part of the
-  later Pipecat-replacement phase.
+- All of this lives in the backend **Agents API** (`/api/v1/agents`):
+  `api/schemas/agent.py` (the flat `AgentSpec`), `api/services/agents/spec.py`
+  (pure graph ↔ spec conversion, unit-tested) and `api/routes/agents.py`, which
+  delegates to the workflow routes so Dograh's validation, masking, versioning and
+  trigger registration still run. The frontend never sees nodes or edges.
+- `PUT` on a multi-step agent returns 409; `POST /agents/{id}/convert` flattens it.
+- The engine is unchanged on purpose. For a one-node agent it registers no
+  transition tools and never runs context summarization (both need edges), so a
+  dedicated single-prompt engine would duplicate ~90% of `pipecat_engine.py`
+  (greetings, answer supervision, transfers, realtime, dispositions, extraction)
+  for no runtime gain. Revisit only as part of replacing Pipecat pieces.
 
 ## 7. `web/` architecture
 
@@ -220,15 +231,15 @@ Workspace row, Search (⌘K jump-to-page menu), then:
 | Page | Built | Backend |
 |---|---|---|
 | Home | Stats, recent calls, agents, getting-started checklist from real state | usage, runs, workflows, telephony, api-keys |
-| Agents | List + editor (see below) | `/workflow/*`, text-chat, telephony initiate-call |
+| Agents | List + editor (see below) | `/agents/*`, text-chat, telephony initiate-call |
 | Tools | List, create/edit End call, Transfer, API request (with live test), MCP (with tool discovery), Calculator | `/tools/*` |
 | Phone numbers | Providers from metadata-driven forms, numbers, inbound agent per number, default caller ID, provider page with setup checklist, SIP endpoints, trunks | `/organizations/telephony-configs/*` |
 | Campaigns | List, create (CSV via presigned upload, retries, calling hours), detail with progress, start/pause/resume, redial, report, activity | `/campaign/*`, `/s3/presigned-upload-url` |
 | Knowledge base | Upload, processing status, "try a question" search | `/knowledge-base/*` |
 | Audio clips | Upload with auto-transcription, play, delete | `/workflow-recordings/*` |
-| Logs | Recent calls + full event stream per call, filter by speech/tools/latency/errors | usage runs + run detail |
+| Logs | Vapi-style call logs, drawer with transcript/recording/analysis/cost/latency, API/webhook/session logs | `/logs/*` |
 | Recordings | Calls with audio, lazy signed-URL playback | usage runs, `/s3/signed-url` |
-| Metrics | Calls per day, outcomes, channels, per-agent measured latency (7/14/30 days) | usage runs, per-agent runs |
+| Metrics | Vapi layout: minutes/calls/spend/cost-per-call KPIs with trend lines; end reasons, cost breakdown and success donuts; duration by agent; unsuccessful calls; peak concurrency; measured latency. 24h/7d/30d/90d, grouped by hour/day/week | `/metrics`, per-agent runs |
 | Agent runs | Filterable table → call page with recording, per-turn latency trace, transcript, structured outputs, QA, call data | usage runs, run detail |
 | API keys | Create (shown once), revoke/restore, quick start | `/user/api-keys` |
 | Integrations | Model providers (schema-driven), Credentials, Langfuse, BigQuery call events, MCP; CRM and WhatsApp marked "Soon" | model config v2, credentials, langfuse, preferences |
@@ -287,7 +298,7 @@ views with real voice calls.
 
 ## 11. Open questions and next steps
 
-1. **Delete the old `ui/`** and its Docker service? Asked, not answered.
+1. ~~Delete the old `ui/`~~ Done; see section 2 for what still references it.
 2. **Delete `web/public/landing/*-preview.html`** (design previews)? Asked, not answered.
 3. In-browser **voice** test call (WebRTC; the old UI has a Pipecat client hook to port).
 4. Vapi's **Composer** and prompt **Generate** buttons need an LLM writing assistant; not built.
@@ -298,7 +309,11 @@ views with real voice calls.
    pieces one at a time. Per-stage TTFB is already captured and shown, which is the baseline.
 8. Landing: voice samples for VoiceLibrary, the YouTube ID for PlatformShowcase,
    and a README credit line ("Landing page design inspired by Sarvam and ElevenLabs").
-9. Tests for `lib/agent.ts` (conversion and flattening) before changing it further.
+9. ~~Tests for the agent conversion~~ Done: `api/tests/test_agent_spec.py`.
+10. Metrics cost is **estimated** (self-hosted Dograh records no charges):
+    LLM tokens × per-model prices, STT/TTS/telephony per call minute, in
+    `api/services/metrics/pricing.py` (same numbers as `web/src/lib/estimates.ts`).
+    Keep the two tables in sync.
 
 ## 12. Gotchas we hit
 
@@ -316,3 +331,8 @@ views with real voice calls.
 - On Windows, PowerShell `Set-Content -Encoding utf8` writes a BOM; don't use it for JSON.
 - Tailwind v4 + next/font: font variables must sit on `<html>` and the theme must
   use `@theme inline`, or everything silently falls back to the system font.
+- Arc UI charts (`web/src/components/arc/`) are vendored from uiarc.dev. Their
+  tokens are scoped to `.arc` in `foundation.css` (the stock file sets `:root`
+  vars that clash with ours and removes focus outlines). Two local patches are
+  marked `// Awaz:`: the line chart no longer floors the y-axis at 1, and the bar
+  chart keeps one decimal in its average.
