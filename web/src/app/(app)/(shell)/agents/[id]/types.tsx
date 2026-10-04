@@ -1,4 +1,4 @@
-import type { Definition } from "@/lib/agent";
+import type { Agent } from "@/lib/agent";
 import type { LatencySummary } from "@/lib/latency";
 import type { Defaults, Effective, ModelConfigV2 } from "@/lib/models";
 
@@ -11,7 +11,9 @@ export type EditorProps = {
     uuid: string | null;
     versionNumber: number | null;
     versionStatus: string | null;
-    definition: Definition;
+    kind: "agent" | "multi_step";
+    multiStepNodes: number;
+    spec: Agent;
     configs: Configs;
   };
   tools: { uuid: string; name: string; description: string | null; category: string }[];
@@ -34,6 +36,8 @@ export type EditorProps = {
   latency: LatencySummary;
   telephony: { id: number; name: string; ready: boolean }[];
   testPhone: string | null;
+  /** Dograh's default QA reviewer prompt; the QA node fails without one. */
+  qaDefaultPrompt: string;
 };
 
 /** Small card used for each settings block inside the editor tabs. */
