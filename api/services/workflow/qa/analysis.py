@@ -260,6 +260,7 @@ async def run_per_node_qa_analysis(
                     "using empty QA result"
                 )
                 parsed = {}
+            node_result["output"] = parsed
             node_result["tags"] = parsed.get("tags", [])
             node_result["summary"] = parsed.get("summary", "")
             node_result["score"] = parsed.get("call_quality_score")
@@ -357,6 +358,7 @@ async def _run_whole_call_qa_analysis(
                 "QA result"
             )
             parsed = {}
+        node_result["output"] = parsed
         node_result["tags"] = parsed.get("tags", [])
         node_result["summary"] = parsed.get("summary", "")
         node_result["score"] = parsed.get("call_quality_score")
