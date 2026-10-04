@@ -1,5 +1,6 @@
 """Execute integrations (QA analysis, webhooks) after workflow run completion."""
 
+import asyncio
 import random
 from datetime import UTC, datetime
 from typing import Any, Dict, Optional
@@ -25,6 +26,7 @@ from api.services.integrations import (
     has_completion_handlers,
     run_completion_handlers,
 )
+from api.services.observability import local_trace
 from api.services.pipecat.tracing_config import register_org_langfuse_credentials
 from api.services.workflow.dto import (
     QANodeData,
@@ -183,6 +185,10 @@ async def run_integrations_post_workflow_run(_ctx, workflow_run_id: int):
     """
     set_current_run_id(workflow_run_id)
     logger.info("Running integrations for workflow run")
+    analysis_running = False
+    analysis_completed = False
+    organization_id = None
+    workflow_run = None
 
     try:
         # Step 1: Get workflow run with full context
@@ -245,6 +251,10 @@ async def run_integrations_post_workflow_run(_ctx, workflow_run_id: int):
 
         # Step 5: Run QA analysis before webhooks
         if qa_nodes:
+            await db_client.update_workflow_run(
+                workflow_run_id, extra={"analysis_status": "running"}
+            )
+            analysis_running = True
             logger.info(f"Found {len(qa_nodes)} QA nodes to execute")
             qa_results = await _run_qa_nodes(
                 qa_nodes,
@@ -280,6 +290,12 @@ async def run_integrations_post_workflow_run(_ctx, workflow_run_id: int):
                 workflow_run, _ = await db_client.get_workflow_run_with_context(
                     workflow_run_id
                 )
+
+            await db_client.update_workflow_run(
+                workflow_run_id, extra={"analysis_status": "completed"}
+            )
+            analysis_running = False
+            analysis_completed = True
 
         # Step 6: Run registered third-party integrations after uploads are complete
         integration_results = await run_completion_handlers(
@@ -357,11 +373,39 @@ async def run_integrations_post_workflow_run(_ctx, workflow_run_id: int):
                 )
 
     except Exception as e:
+        if analysis_running or (
+            not analysis_completed
+            and workflow_run is not None
+            and (getattr(workflow_run, "extra", None) or {}).get("analysis_status")
+            == "pending"
+        ):
+            try:
+                async with asyncio.timeout(3):
+                    await db_client.update_workflow_run(
+                        workflow_run_id, extra={"analysis_status": "failed"}
+                    )
+            except Exception:
+                logger.warning("Could not persist failed analysis status")
         log_failure(
             classify_exception(e, source=ErrorSource.INTEGRATION),
             workflow_run_id=workflow_run_id,
         )
         raise
+    finally:
+        snapshot = local_trace.finish(workflow_run_id)
+        if snapshot is not None and organization_id:
+            try:
+                async with asyncio.timeout(3):
+                    found, previous = await db_client.get_call_log_payload(
+                        workflow_run_id, organization_id, "trace"
+                    )
+                    if found:
+                        await db_client.update_workflow_run(
+                            workflow_run_id,
+                            logs={"local_trace": local_trace.merge(previous, snapshot)},
+                        )
+            except Exception:
+                logger.warning("Could not persist post-call local trace")
 
 
 def _build_render_context(
