@@ -1,5 +1,6 @@
 import asyncio
 import io
+import json
 import wave
 from copy import deepcopy
 from datetime import UTC, datetime
@@ -94,6 +95,7 @@ class InMemoryRecordingBuffers:
     """
 
     def __init__(self, workflow_run_id: int, sample_rate: int, num_channels: int = 1):
+        self.started_at: str | None = None
         self.mixed = InMemoryAudioBuffer(
             workflow_run_id=workflow_run_id,
             sample_rate=sample_rate,
@@ -123,6 +125,10 @@ class InMemoryLogsBuffer:
         self._current_turn: Optional[int] = None
         self._current_node_id: Optional[str] = None
         self._current_node_name: Optional[str] = None
+        self.max_events = 20000
+        self.max_bytes = 8 * 1024 * 1024
+        self.size_bytes = 0
+        self.dropped_events = 0
 
     def set_current_node(self, node_id: str, node_name: str):
         """Set the current node ID and name to be injected into subsequent events."""
@@ -164,7 +170,15 @@ class InMemoryLogsBuffer:
             node_id=node_id,
             node_name=node_name,
         )
+        size = len(json.dumps(timestamped_event, default=str).encode())
+        if (
+            len(self._events) >= self.max_events
+            or self.size_bytes + size > self.max_bytes
+        ):
+            self.dropped_events += 1
+            return
         self._events.append(timestamped_event)
+        self.size_bytes += size
         logger.trace(
             f"Appended event {event.get('type')} to logs buffer for workflow {self._workflow_run_id}"
         )
