@@ -15,6 +15,7 @@ import tempfile
 from loguru import logger
 
 from api.db import db_client
+from api.services.observability.waveform import waveform_metadata
 from api.services.storage import (
     get_current_storage_backend,
     get_storage_for_backend,
@@ -115,6 +116,22 @@ async def upload_workflow_run_artifacts(
             )
 
     if recordings_metadata:
+        audio_by_track = {
+            "mixed": mixed_audio_wav,
+            "user": user_audio_wav,
+            "bot": bot_audio_wav,
+        }
+        for track, metadata in recordings_metadata.items():
+            try:
+                metadata.update(
+                    await asyncio.to_thread(waveform_metadata, audio_by_track[track])
+                )
+            except Exception as exc:
+                logger.warning(
+                    "Waveform generation failed for run {} ({})",
+                    workflow_run_id,
+                    type(exc).__name__,
+                )
         await db_client.update_workflow_run(
             run_id=workflow_run_id,
             storage_backend=storage_backend.value,
