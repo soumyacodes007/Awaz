@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { SwitchRow } from "@/components/app/client";
 import { inputCls } from "@/components/app/ui";
-import type { AgentFields } from "@/lib/agent";
+import type { Agent } from "@/lib/agent";
 import { estimate, PRESETS, type Preset } from "@/lib/estimates";
 import { type LatencySummary, STAGE_COLOR } from "@/lib/latency";
 import { type Effective, languageName, providerName, type Service, type ServiceConfig } from "@/lib/models";
@@ -187,8 +187,8 @@ function Overview({
 }
 
 export function AgentTab({
-  fields,
-  set,
+  agent,
+  update,
   effective,
   custom,
   activePreset,
@@ -198,8 +198,8 @@ export function AgentTab({
   onPreset,
   readOnly,
 }: {
-  fields: AgentFields;
-  set: <K extends keyof AgentFields>(k: K, v: AgentFields[K]) => void;
+  agent: Agent;
+  update: (patch: Partial<Agent>) => void;
   effective: Effective;
   custom: boolean;
   activePreset: string | null;
@@ -214,7 +214,7 @@ export function AgentTab({
       <Overview
         effective={effective}
         latency={latency}
-        toolCount={fields.toolUuids.length}
+        toolCount={agent.tool_uuids.length}
         activePreset={activePreset}
         custom={custom}
         onPreset={onPreset}
@@ -222,7 +222,7 @@ export function AgentTab({
         readOnly={readOnly}
       />
 
-      <PromptEditor value={fields.prompt} onChange={(v) => set("prompt", v)} readOnly={readOnly} />
+      <PromptEditor value={agent.prompt} onChange={(v) => update({ prompt: v })} readOnly={readOnly} />
 
       <Section
         title="First message"
@@ -234,10 +234,10 @@ export function AgentTab({
                 key={t}
                 type="button"
                 disabled={readOnly}
-                onClick={() => set("greetingType", t)}
-                aria-pressed={fields.greetingType === t}
+                onClick={() => update({ greeting: { ...agent.greeting, type: t } })}
+                aria-pressed={agent.greeting.type === t}
                 className={`h-7 rounded-sm px-2.5 text-[13px] transition-colors ${
-                  fields.greetingType === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  agent.greeting.type === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t === "text" ? "Spoken text" : "Audio clip"}
@@ -246,11 +246,11 @@ export function AgentTab({
           </div>
         }
       >
-        {fields.greetingType === "text" ? (
+        {agent.greeting.type === "text" ? (
           <input
             aria-label="First message"
-            value={fields.greeting}
-            onChange={(e) => set("greeting", e.target.value)}
+            value={agent.greeting.text ?? ""}
+            onChange={(e) => update({ greeting: { ...agent.greeting, text: e.target.value || null } })}
             readOnly={readOnly}
             placeholder="Namaste! Thanks for calling. How can I help you today?"
             className={`${inputCls} h-10`}
@@ -259,8 +259,8 @@ export function AgentTab({
           <select
             aria-label="Audio clip"
             disabled={readOnly}
-            value={fields.greetingRecordingId ?? ""}
-            onChange={(e) => set("greetingRecordingId", e.target.value || null)}
+            value={agent.greeting.recording_id ?? ""}
+            onChange={(e) => update({ greeting: { ...agent.greeting, recording_id: e.target.value || null } })}
             className={`${inputCls} h-10`}
           >
             <option value="">Choose a clip…</option>
@@ -283,8 +283,8 @@ export function AgentTab({
           <SwitchRow
             title="Caller can interrupt"
             body="Stop speaking as soon as the caller starts talking. Turn off for disclosures that must be heard in full."
-            checked={fields.allowInterrupt}
-            onChange={(v) => !readOnly && set("allowInterrupt", v)}
+            checked={agent.allow_interrupt}
+            onChange={(v) => !readOnly && update({ allow_interrupt: v })}
           />
         </div>
       </Section>
