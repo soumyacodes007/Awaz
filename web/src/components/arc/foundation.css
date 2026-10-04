@@ -1,0 +1,70 @@
+/* Arc UI design tokens (https://uiarc.dev), scoped to `.arc` and mapped onto
+   the dashboard's shadcn zinc palette.
+
+   Arc's stock foundation.css sets these on :root, which would override our
+   --accent/--border/--font-* tokens app-wide and also removes every focus
+   outline. Scoping keeps Arc's charts looking like the rest of the app and
+   leaves global styles alone. Wrap a chart in `<div className="arc">`; set
+   --accent (bar charts) or --series-1..4 on the wrapper to recolor it. */
+
+.arc {
+  --background: var(--color-background);
+  --surface: var(--color-card);
+  --surface-raised: var(--color-card);
+  --surface-muted: var(--color-muted);
+  --foreground: var(--color-foreground);
+  --text-secondary: #52525b; /* zinc-600 */
+  --text-muted: var(--color-muted-foreground);
+  --border: var(--color-border);
+  --border-subtle: #f4f4f5;
+  --border-strong: #d4d4d8;
+  --accent: var(--color-primary);
+  --accent-strong: #09090b;
+  --accent-subtle: rgb(24 24 27 / 0.08);
+  --accent-foreground: var(--color-primary-foreground);
+  --focus-ring: var(--color-ring);
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow-resting: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-raised: 0 6px 18px rgb(0 0 0 / 0.065), 0 1px 3px rgb(0 0 0 / 0.035);
+  --shadow-floating: 0 12px 32px rgb(0 0 0 / 0.1), 0 2px 8px rgb(0 0 0 / 0.05);
+
+  /* Vapi-style series: green, blue, violet, amber. */
+  --series-1: #10b981;
+  --series-2: #3b82f6;
+  --series-3: #8b5cf6;
+  --series-4: #f59e0b;
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+  --radius-control: 0.5rem; --radius-panel: 0.75rem; --radius-surface: 1rem; --radius-pill: 9999px;
+
+  --font-display: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 0.75rem; --text-sm: 0.8125rem; --text-base: 0.875rem; --text-lg: 1rem;
+  --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem;
+  --tracking-display: -0.02em; --tracking-body: -0.005em;
+  --leading-display: 1.1; --leading-body: 1.4;
+
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: linear(0, 0.0258, 0.09, 0.1763, 0.2732, 0.3724, 0.4683, 0.5573, 0.6376, 0.7082, 0.7689, 0.8202, 0.8628, 0.8976, 0.9256, 0.9476, 0.9648, 0.9778, 0.9875, 0.9945, 0.9994, 1.0026, 1.0047, 1.0058, 1.0062, 1.0062, 1.0059, 1.0055, 1.0049, 1.0043, 1.0036, 1.0031, 1.0025, 1.002, 1.0016, 1.0013, 1);
+  --duration-instant: 120ms; --duration-fast: 160ms; --duration-standard: 240ms; --duration-considered: 480ms; --duration-spring: 580ms;
+
+  color: var(--foreground);
+  font-family: var(--font-body);
+
+  /* The charts' screen-reader tables are 1px and clipped, but a table ignores
+     its width and lays out at full size. Anchor them here and clip sideways so
+     they can't widen the page. */
+  position: relative;
+  overflow-x: clip;
+}
+
+.arc [class*="srOnly"] {
+  top: 0;
+  left: 0;
+}
