@@ -222,7 +222,7 @@ function PhoneTest({
       {runId ? (
         <p className="rounded-md bg-emerald-50 px-3.5 py-2.5 text-[13px] text-emerald-700">
           Calling now.{" "}
-          <Link href={`/runs/${agentId}/${runId}`} className="underline">
+          <Link href={`/logs?call=${runId}`} className="underline">
             Watch call #{runId}
           </Link>
         </p>
