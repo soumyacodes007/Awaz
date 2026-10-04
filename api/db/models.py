@@ -519,7 +519,9 @@ class WorkflowModel(Base):
     )
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     user = relationship("UserModel", back_populates="workflows")
-    organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
+    organization_id = Column(
+        Integer, ForeignKey("organizations.id"), nullable=True, index=True
+    )
     organization = relationship("OrganizationModel")
     # Optional folder for grouping in the agents list. NULL = "Uncategorized".
     # ON DELETE SET NULL: deleting a folder un-files its agents, never deletes them.
@@ -673,6 +675,22 @@ class WorkflowRunModel(Base):
         ),
         Index("idx_workflow_runs_workflow_id", "workflow_id"),
         Index("idx_workflow_runs_campaign_id", "campaign_id"),
+        Index("ix_workflow_runs_workflow_time", "workflow_id", "created_at", "id"),
+        Index("ix_workflow_runs_time", "created_at", "id"),
+        Index(
+            "ix_workflow_runs_customer_search",
+            text(
+                "(coalesce(nullif(gathered_context->>'customer_phone_number', ''), CASE WHEN call_type = 'inbound' THEN nullif(initial_context->>'caller_number', '') ELSE coalesce(nullif(initial_context->>'called_number', ''), nullif(initial_context->>'phone_number', '')) END)) gin_trgm_ops"
+            ),
+            postgresql_using="gin",
+        ),
+        Index(
+            "ix_workflow_runs_assistant_search",
+            text(
+                "(CASE WHEN call_type = 'inbound' THEN coalesce(nullif(initial_context->>'called_number', ''), nullif(initial_context->>'phone_number', '')) ELSE nullif(initial_context->>'caller_number', '') END) gin_trgm_ops"
+            ),
+            postgresql_using="gin",
+        ),
     )
 
 
@@ -711,6 +729,59 @@ class WorkflowRunTextSessionModel(Base):
     )
 
     __table_args__ = (Index("ix_workflow_run_text_sessions_updated_at", "updated_at"),)
+
+
+class CallFeedbackModel(Base):
+    __tablename__ = "call_feedback"
+    id = Column(Integer, primary_key=True)
+    workflow_run_id = Column(
+        Integer, ForeignKey("workflow_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    organization_id = Column(
+        Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    event_id = Column(String(32), nullable=False, default="call")
+    rating = Column(String(16), nullable=False)
+    note = Column(Text, nullable=True)
+    created_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    updated_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    __table_args__ = (
+        UniqueConstraint(
+            "workflow_run_id",
+            "user_id",
+            "event_id",
+            name="uq_call_feedback_run_user_event",
+        ),
+        Index("ix_call_feedback_org_run", "organization_id", "workflow_run_id"),
+    )
+
+
+class APIRequestLogModel(Base):
+    __tablename__ = "api_request_logs"
+    id = Column(Integer, primary_key=True)
+    organization_id = Column(
+        Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    request_id = Column(String(36), nullable=False)
+    method = Column(String(16), nullable=False)
+    path = Column(String(500), nullable=False)
+    status_code = Column(Integer, nullable=False)
+    duration_ms = Column(Float, nullable=False)
+    query = Column(JSON, nullable=False, default=dict)
+    created_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    __table_args__ = (
+        Index("ix_api_request_logs_org_time", "organization_id", "created_at", "id"),
+        Index("ix_api_request_logs_created_at", "created_at"),
+    )
 
 
 class OrganizationUsageCycleModel(Base):
@@ -1196,6 +1267,7 @@ class WebhookDeliveryModel(Base):
             postgresql_where=text("status = 'pending'"),
         ),
         Index("idx_webhook_deliveries_run", "workflow_run_id"),
+        Index("ix_webhook_deliveries_org_time", "organization_id", "created_at", "id"),
         # Per-run/per-node idempotency: one delivery per webhook node per run.
         UniqueConstraint(
             "workflow_run_id",
