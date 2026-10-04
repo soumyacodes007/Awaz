@@ -161,7 +161,7 @@ export function CampaignDetail({ campaign: c, runs, totalRuns }: { campaign: Cam
               {runs.map((r) => (
                 <tr key={r.id} className={tr}>
                   <td className={td}>
-                    <Link href={`/runs/${c.workflow_id}/${r.id}`} className="block hover:underline">
+                    <Link href={`/logs?call=${r.id}`} className="block hover:underline">
                       <span className="block font-mono text-[13px] text-foreground">{r.phone ?? `#${r.id}`}</span>
                       {r.name ? <span className="text-[12px] text-muted-foreground">{r.name}</span> : null}
                     </Link>
