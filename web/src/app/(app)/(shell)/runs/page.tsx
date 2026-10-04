@@ -60,7 +60,7 @@ export default async function RunsPage({ searchParams }: { searchParams: Promise
                 {list.map((r) => {
                   const ch = channelOf(r.mode);
                   const number = r.call_type === "inbound" ? r.caller_number : (r.called_number ?? r.phone_number);
-                  const href = `/runs/${r.workflow_id}/${r.id}`;
+                  const href = `/logs?call=${r.id}`;
                   return (
                     <tr key={r.id} className={`${tr} group`}>
                       <td className={td}>
