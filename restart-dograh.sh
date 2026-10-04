@@ -13,18 +13,15 @@ cd "$(dirname "$0")"
 export REGISTRY="${REGISTRY:-ghcr.io/dograh-hq}"
 export ENABLE_TELEMETRY="${ENABLE_TELEMETRY:-false}"
 
+echo "==> building the local api image (cached unless requirements changed)"
+docker compose build api
+
 echo "==> starting containers"
-docker compose up -d
+docker compose up -d --remove-orphans
 
 echo "==> waiting for API"
 for _ in $(seq 1 45); do
     if curl -sf -o /dev/null http://localhost:8000/api/v1/health; then break; fi
-    sleep 2
-done
-
-echo "==> waiting for UI"
-for _ in $(seq 1 45); do
-    if curl -sf -o /dev/null http://localhost:3010; then break; fi
     sleep 2
 done
 
@@ -48,4 +45,4 @@ else
 fi
 
 echo
-echo "Open http://localhost:3010 and hard-refresh (Ctrl+Shift+R) before testing audio."
+echo "Start the frontend with: cd web && npm run dev   (http://localhost:3000)"
