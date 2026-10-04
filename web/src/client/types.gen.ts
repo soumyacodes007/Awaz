@@ -63,6 +63,106 @@ export type ApiKeyStatusResponse = {
 };
 
 /**
+ * APIRequestLogDetail
+ */
+export type ApiRequestLogDetail = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Request Id
+     */
+    request_id: string;
+    /**
+     * Method
+     */
+    method: string;
+    /**
+     * Path
+     */
+    path: string;
+    /**
+     * Status Code
+     */
+    status_code: number;
+    /**
+     * Duration Ms
+     */
+    duration_ms: number;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Query
+     */
+    query: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * APIRequestLogPage
+ */
+export type ApiRequestLogPage = {
+    /**
+     * Items
+     */
+    items: Array<ApiRequestLogSummary>;
+    /**
+     * Total Count
+     */
+    total_count: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Total Pages
+     */
+    total_pages: number;
+};
+
+/**
+ * APIRequestLogSummary
+ */
+export type ApiRequestLogSummary = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Request Id
+     */
+    request_id: string;
+    /**
+     * Method
+     */
+    method: string;
+    /**
+     * Path
+     */
+    path: string;
+    /**
+     * Status Code
+     */
+    status_code: number;
+    /**
+     * Duration Ms
+     */
+    duration_ms: number;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
  * ARIConfigurationRequest
  *
  * Request schema for Asterisk ARI configuration.
@@ -245,6 +345,226 @@ export type ActiveCallsResponse = {
 };
 
 /**
+ * AgentListItem
+ */
+export type AgentListItem = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Uuid
+     */
+    uuid: string | null;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Total Runs
+     */
+    total_runs: number;
+    /**
+     * Kind
+     */
+    kind: 'agent' | 'multi_step';
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+    /**
+     * Version Status
+     */
+    version_status: string | null;
+    models: AgentModels;
+};
+
+/**
+ * AgentMetrics
+ */
+export type AgentMetrics = {
+    /**
+     * Workflow Id
+     */
+    workflow_id: number;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Calls
+     */
+    calls: number;
+    /**
+     * Minutes
+     */
+    minutes: number;
+    /**
+     * Avg Duration Seconds
+     */
+    avg_duration_seconds: number | null;
+    /**
+     * Spend Usd
+     */
+    spend_usd: number;
+};
+
+/**
+ * AgentModels
+ *
+ * Effective models (agent override or workspace default), without keys.
+ */
+export type AgentModels = {
+    /**
+     * Custom
+     */
+    custom: boolean;
+    stt: ModelSummary;
+    llm: ModelSummary;
+    tts: ModelSummary;
+};
+
+/**
+ * AgentResponse
+ */
+export type AgentResponse = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Uuid
+     */
+    uuid: string | null;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Kind
+     *
+     * multi_step agents were built as a graph and must be converted before editing.
+     */
+    kind: 'agent' | 'multi_step';
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+    /**
+     * Version Status
+     */
+    version_status: string | null;
+    agent: AgentSpec;
+    /**
+     * Settings
+     */
+    settings: {
+        [key: string]: unknown;
+    };
+    models: AgentModels;
+    /**
+     * Multi Step Nodes
+     *
+     * Conversation steps in a legacy flow.
+     */
+    multi_step_nodes?: number;
+};
+
+/**
+ * AgentSpec
+ *
+ * Everything that defines how an agent behaves on a call.
+ */
+export type AgentSpec = {
+    /**
+     * Prompt
+     */
+    prompt?: string;
+    greeting?: Greeting;
+    /**
+     * Allow Interrupt
+     */
+    allow_interrupt?: boolean;
+    /**
+     * Tool Uuids
+     */
+    tool_uuids?: Array<string>;
+    /**
+     * Document Uuids
+     */
+    document_uuids?: Array<string>;
+    extraction?: Extraction;
+    /**
+     * Delayed Start
+     */
+    delayed_start?: boolean;
+    /**
+     * Delayed Start Duration
+     */
+    delayed_start_duration?: number | null;
+    pre_call_fetch?: PreCallFetch;
+    api_trigger?: ApiTrigger;
+    /**
+     * Webhooks
+     */
+    webhooks?: Array<Webhook>;
+    quality_review?: QualityReview | null;
+};
+
+/**
+ * AgentVersion
+ */
+export type AgentVersion = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+    /**
+     * Kind
+     */
+    kind: 'agent' | 'multi_step';
+    agent: AgentSpec;
+    /**
+     * Settings
+     */
+    settings: {
+        [key: string]: unknown;
+    };
+};
+
+/**
  * AmbientNoiseConfigurationDefaults
  */
 export type AmbientNoiseConfigurationDefaults = {
@@ -302,6 +622,40 @@ export type AmbientNoiseUploadResponse = {
 };
 
 /**
+ * AnalysisResponse
+ */
+export type AnalysisResponse = {
+    /**
+     * Status
+     */
+    status: 'available' | 'pending' | 'failed' | 'not_configured' | 'unavailable';
+    /**
+     * Evaluators
+     */
+    evaluators: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+/**
+ * ApiTrigger
+ *
+ * Public URL that starts an outbound call with this agent.
+ */
+export type ApiTrigger = {
+    /**
+     * Enabled
+     */
+    enabled?: boolean;
+    /**
+     * Path
+     *
+     * Generated on save when empty.
+     */
+    path?: string | null;
+};
+
+/**
  * AppendTextChatMessageRequest
  */
 export type AppendTextChatMessageRequest = {
@@ -313,6 +667,20 @@ export type AppendTextChatMessageRequest = {
      * Expected Revision
      */
     expected_revision?: number | null;
+};
+
+/**
+ * ArtifactURLResponse
+ */
+export type ArtifactUrlResponse = {
+    /**
+     * Url
+     */
+    url: string;
+    /**
+     * Expires In Seconds
+     */
+    expires_in_seconds: number;
 };
 
 /**
@@ -932,6 +1300,199 @@ export type CallEventsSettings = {
     config?: {
         [key: string]: unknown;
     };
+};
+
+/**
+ * CallFeedbackRequest
+ */
+export type CallFeedbackRequest = {
+    /**
+     * Event Id
+     */
+    event_id?: string;
+    /**
+     * Rating
+     */
+    rating: 'positive' | 'negative';
+    /**
+     * Note
+     */
+    note?: string | null;
+};
+
+/**
+ * CallLogDetail
+ */
+export type CallLogDetail = {
+    call: CallLogSummary;
+    /**
+     * Recording Started At
+     */
+    recording_started_at: string | null;
+    /**
+     * Timing Available
+     */
+    timing_available: boolean;
+    /**
+     * Artifacts
+     */
+    artifacts: {
+        [key: string]: unknown;
+    };
+    /**
+     * Initial Context
+     */
+    initial_context: {
+        [key: string]: unknown;
+    };
+    /**
+     * Gathered Context
+     */
+    gathered_context: {
+        [key: string]: unknown;
+    };
+    /**
+     * Availability
+     */
+    availability: {
+        [key: string]: boolean;
+    };
+    /**
+     * Trace Url
+     */
+    trace_url?: string | null;
+};
+
+/**
+ * CallLogPage
+ */
+export type CallLogPage = {
+    /**
+     * Items
+     */
+    items: Array<CallLogSummary>;
+    /**
+     * Total Count
+     */
+    total_count: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Total Pages
+     */
+    total_pages: number;
+    /**
+     * Has More
+     */
+    has_more: boolean;
+    /**
+     * Next Cursor
+     */
+    next_cursor: string | null;
+    /**
+     * Snapshot At
+     */
+    snapshot_at: string;
+};
+
+/**
+ * CallLogSummary
+ */
+export type CallLogSummary = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Workflow Id
+     */
+    workflow_id: number;
+    /**
+     * Workflow Name
+     */
+    workflow_name: string;
+    /**
+     * Definition Id
+     */
+    definition_id: number | null;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+    /**
+     * Version Status
+     */
+    version_status: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Is Completed
+     */
+    is_completed: boolean;
+    /**
+     * Channel
+     */
+    channel: string;
+    /**
+     * Provider
+     */
+    provider: string;
+    /**
+     * Direction
+     */
+    direction: string;
+    /**
+     * Customer Number
+     */
+    customer_number: string | null;
+    /**
+     * Assistant Number
+     */
+    assistant_number: string | null;
+    /**
+     * Provider Call Id
+     */
+    provider_call_id: string | null;
+    /**
+     * Ended Reason
+     */
+    ended_reason: string | null;
+    /**
+     * Disposition
+     */
+    disposition: string | null;
+    /**
+     * Duration Seconds
+     */
+    duration_seconds: number | null;
+    /**
+     * Charge Usd
+     */
+    charge_usd?: number | null;
+    /**
+     * Credits Used
+     */
+    credits_used?: number | null;
+    /**
+     * Has Recording
+     */
+    has_recording: boolean;
+    /**
+     * Has Transcript
+     */
+    has_transcript: boolean;
 };
 
 /**
@@ -1555,6 +2116,62 @@ export type ContextDestinationRule = {
 };
 
 /**
+ * CostResponse
+ */
+export type CostResponse = {
+    /**
+     * Status
+     */
+    status: 'available' | 'partial' | 'unavailable';
+    /**
+     * Currency
+     */
+    currency?: 'USD';
+    /**
+     * Charge Usd
+     */
+    charge_usd: number | null;
+    /**
+     * Credits Used
+     */
+    credits_used: number | null;
+    /**
+     * Duration Seconds
+     */
+    duration_seconds: number | null;
+    /**
+     * Usage
+     */
+    usage: {
+        [key: string]: unknown;
+    };
+    /**
+     * Components
+     */
+    components: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Source
+     */
+    source: 'recorded_usage' | 'recorded_billing';
+};
+
+/**
+ * CountItem
+ */
+export type CountItem = {
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Count
+     */
+    count: number;
+};
+
+/**
  * CreateAPIKeyRequest
  */
 export type CreateApiKeyRequest = {
@@ -1588,6 +2205,24 @@ export type CreateApiKeyResponse = {
      * Created At
      */
     created_at: string;
+};
+
+/**
+ * CreateAgentRequest
+ */
+export type CreateAgentRequest = {
+    /**
+     * Name
+     */
+    name: string;
+    agent?: AgentSpec;
+    settings?: WorkflowConfigurationDefaults | null;
+    /**
+     * Attach End Call Tool
+     *
+     * Attach the workspace's shared End call tool so the agent can hang up.
+     */
+    attach_end_call_tool?: boolean;
 };
 
 /**
@@ -2840,6 +3475,42 @@ export type EndTextChatSessionRequest = {
 };
 
 /**
+ * EventPage
+ */
+export type EventPage = {
+    /**
+     * Items
+     */
+    items: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Total Count
+     */
+    total_count: number;
+    /**
+     * Offset
+     */
+    offset: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Has More
+     */
+    has_more: boolean;
+    /**
+     * Available
+     */
+    available: boolean;
+    /**
+     * Truncated
+     */
+    truncated?: boolean;
+};
+
+/**
  * ExotelConfigurationRequest
  */
 export type ExotelConfigurationRequest = {
@@ -2891,6 +3562,90 @@ export type ExternalPbxFieldMapping = {
      * Destination Field
      */
     destination_field: string;
+};
+
+/**
+ * Extraction
+ *
+ * Structured outputs pulled from every call.
+ */
+export type Extraction = {
+    /**
+     * Enabled
+     */
+    enabled?: boolean;
+    /**
+     * Prompt
+     */
+    prompt?: string | null;
+    /**
+     * Variables
+     */
+    variables?: Array<ExtractionVariable>;
+};
+
+/**
+ * ExtractionVariable
+ */
+export type ExtractionVariable = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Type
+     */
+    type?: 'string' | 'number' | 'boolean';
+    /**
+     * Prompt
+     *
+     * What to look for in the conversation.
+     */
+    prompt?: string | null;
+};
+
+/**
+ * FeedbackItem
+ */
+export type FeedbackItem = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Event Id
+     */
+    event_id: string;
+    /**
+     * Rating
+     */
+    rating: 'positive' | 'negative';
+    /**
+     * Note
+     */
+    note: string | null;
+    /**
+     * User Id
+     */
+    user_id: number;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * FeedbackPage
+ */
+export type FeedbackPage = {
+    /**
+     * Items
+     */
+    items: Array<FeedbackItem>;
 };
 
 /**
@@ -3245,6 +4000,30 @@ export type GraphConstraints = {
      * Max Instances
      */
     max_instances?: number | null;
+};
+
+/**
+ * Greeting
+ *
+ * What the agent says when the call connects.
+ */
+export type Greeting = {
+    /**
+     * Type
+     */
+    type?: 'text' | 'audio';
+    /**
+     * Text
+     *
+     * Spoken via TTS when type is text. Supports {{variables}}.
+     */
+    text?: string | null;
+    /**
+     * Recording Id
+     *
+     * Audio clip played when type is audio.
+     */
+    recording_id?: string | null;
 };
 
 /**
@@ -3849,6 +4628,36 @@ export type LastCampaignSettingsResponse = {
 };
 
 /**
+ * LatencyResponse
+ */
+export type LatencyResponse = {
+    /**
+     * Available
+     */
+    available: boolean;
+    /**
+     * Detailed Breakdown Available
+     */
+    detailed_breakdown_available: boolean;
+    /**
+     * Averages Ms
+     */
+    averages_ms: {
+        [key: string]: number | null;
+    };
+    /**
+     * Turns
+     */
+    turns: Array<{
+        [key: string]: unknown;
+    }>;
+    /**
+     * Truncated
+     */
+    truncated?: boolean;
+};
+
+/**
  * LMNT
  *
  * Stored LMNT configurations remain readable after the provider's retirement.
@@ -4148,6 +4957,179 @@ export type McpToolDefinition = {
 };
 
 /**
+ * MetricsBucket
+ */
+export type MetricsBucket = {
+    /**
+     * Start
+     *
+     * Bucket start in the requested timezone.
+     */
+    start: string;
+    /**
+     * Calls
+     */
+    calls: number;
+    /**
+     * Minutes
+     */
+    minutes: number;
+    /**
+     * Spend Usd
+     */
+    spend_usd: number;
+    /**
+     * Avg Cost Usd
+     */
+    avg_cost_usd: number | null;
+    /**
+     * Avg Duration Seconds
+     */
+    avg_duration_seconds: number | null;
+    /**
+     * Peak Concurrency
+     */
+    peak_concurrency: number;
+    /**
+     * Cost By Component
+     *
+     * llm, stt, tts, telephony in USD.
+     */
+    cost_by_component: {
+        [key: string]: number;
+    };
+    /**
+     * Ended Reasons
+     */
+    ended_reasons: {
+        [key: string]: number;
+    };
+    /**
+     * Success
+     *
+     * pass, needs_review, fail, not_reviewed.
+     */
+    success: {
+        [key: string]: number;
+    };
+    /**
+     * Avg Duration By Agent
+     *
+     * Agent id → average seconds, agents with calls in this bucket.
+     */
+    avg_duration_by_agent: {
+        [key: string]: number;
+    };
+};
+
+/**
+ * MetricsResponse
+ */
+export type MetricsResponse = {
+    /**
+     * Start At
+     */
+    start_at: string;
+    /**
+     * End At
+     */
+    end_at: string;
+    /**
+     * Group By
+     */
+    group_by: 'hour' | 'day' | 'week';
+    /**
+     * Timezone
+     */
+    timezone: string;
+    /**
+     * Truncated
+     *
+     * True when the range held more calls than one response aggregates.
+     */
+    truncated: boolean;
+    totals: MetricsTotals;
+    /**
+     * Buckets
+     */
+    buckets: Array<MetricsBucket>;
+    /**
+     * Agents
+     */
+    agents: Array<AgentMetrics>;
+    /**
+     * Ended Reasons
+     */
+    ended_reasons: Array<CountItem>;
+    /**
+     * Cost Breakdown
+     */
+    cost_breakdown: {
+        [key: string]: number;
+    };
+    /**
+     * Success
+     */
+    success: {
+        [key: string]: number;
+    };
+    /**
+     * Unsuccessful Calls
+     */
+    unsuccessful_calls: Array<UnsuccessfulCall>;
+};
+
+/**
+ * MetricsTotals
+ */
+export type MetricsTotals = {
+    /**
+     * Calls
+     */
+    calls: number;
+    /**
+     * Minutes
+     */
+    minutes: number;
+    /**
+     * Spend Usd
+     *
+     * Recorded charge, or an estimate when none was recorded.
+     */
+    spend_usd: number;
+    /**
+     * Avg Cost Usd
+     */
+    avg_cost_usd: number | null;
+    /**
+     * Avg Duration Seconds
+     */
+    avg_duration_seconds: number | null;
+    /**
+     * Reviewed Calls
+     *
+     * Calls with a QA score.
+     */
+    reviewed_calls: number;
+    /**
+     * Success Rate
+     *
+     * Share of reviewed calls scoring 7 or more (0–1).
+     */
+    success_rate: number | null;
+    /**
+     * Peak Concurrency
+     */
+    peak_concurrency: number;
+    /**
+     * Cost Estimated
+     *
+     * True when any cost came from list prices rather than billing.
+     */
+    cost_estimated: boolean;
+};
+
+/**
  * MiniMaxLLMConfiguration
  */
 export type MiniMaxLlmConfiguration = {
@@ -4261,6 +5243,28 @@ export type ModelConfigurationMetricPrice = {
 export type ModelConfigurationPricingResponse = {
     platform_usage?: ModelConfigurationMetricPrice | null;
     dograh_model?: ModelConfigurationMetricPrice | null;
+};
+
+/**
+ * ModelSummary
+ */
+export type ModelSummary = {
+    /**
+     * Provider
+     */
+    provider?: string | null;
+    /**
+     * Model
+     */
+    model?: string | null;
+    /**
+     * Voice
+     */
+    voice?: string | null;
+    /**
+     * Language
+     */
+    language?: string | null;
 };
 
 /**
@@ -4996,6 +6000,26 @@ export type PlivoConfigurationRequest = {
 };
 
 /**
+ * PreCallFetch
+ *
+ * POST to your API before the call opens, to enrich the call context.
+ */
+export type PreCallFetch = {
+    /**
+     * Mode
+     */
+    mode?: 'disabled' | 'always' | 'inbound' | 'outbound';
+    /**
+     * Url
+     */
+    url?: string | null;
+    /**
+     * Credential Uuid
+     */
+    credential_uuid?: string | null;
+};
+
+/**
  * PresetToolParameter
  *
  * A parameter injected by Dograh at runtime.
@@ -5356,6 +6380,58 @@ export type PublicEmbedChatTurn = {
     status: string;
     user_message?: PublicEmbedChatMessage | null;
     assistant_message?: PublicEmbedChatMessage | null;
+};
+
+/**
+ * PublishAgentResponse
+ */
+export type PublishAgentResponse = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Published At
+     */
+    published_at: string | null;
+};
+
+/**
+ * QualityReview
+ *
+ * LLM review of every finished call.
+ */
+export type QualityReview = {
+    /**
+     * Enabled
+     */
+    enabled?: boolean;
+    /**
+     * System Prompt
+     *
+     * Empty uses Dograh's default reviewer prompt.
+     */
+    system_prompt?: string | null;
+    /**
+     * Min Call Duration
+     */
+    min_call_duration?: number;
+    /**
+     * Sample Rate
+     */
+    sample_rate?: number;
+    /**
+     * Include Voicemail
+     */
+    include_voicemail?: boolean;
 };
 
 /**
@@ -5924,6 +7000,82 @@ export type ServiceKeyResponse = {
 };
 
 /**
+ * SessionLogPage
+ */
+export type SessionLogPage = {
+    /**
+     * Items
+     */
+    items: Array<SessionLogSummary>;
+    /**
+     * Total Count
+     */
+    total_count: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Total Pages
+     */
+    total_pages: number;
+};
+
+/**
+ * SessionLogSummary
+ */
+export type SessionLogSummary = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Workflow Run Id
+     */
+    workflow_run_id: number;
+    /**
+     * Workflow Id
+     */
+    workflow_id: number;
+    /**
+     * Workflow Name
+     */
+    workflow_name: string;
+    /**
+     * Definition Id
+     */
+    definition_id: number | null;
+    /**
+     * Version Number
+     */
+    version_number: number | null;
+    /**
+     * Revision
+     */
+    revision: number;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Is Completed
+     */
+    is_completed: boolean;
+};
+
+/**
  * SetupStep
  *
  * One thing the customer must do before a configuration can carry calls.
@@ -6231,6 +7383,24 @@ export type SpeechmaticsSttConfiguration = {
      * ISO 639-1 language code.
      */
     language?: string;
+};
+
+/**
+ * StructuredOutputsResponse
+ */
+export type StructuredOutputsResponse = {
+    /**
+     * Extracted Variables
+     */
+    extracted_variables: {
+        [key: string]: unknown;
+    };
+    /**
+     * Evaluations
+     */
+    evaluations: Array<{
+        [key: string]: unknown;
+    }>;
 };
 
 /**
@@ -7149,6 +8319,82 @@ export type TrafficVariantStats = {
 };
 
 /**
+ * TranscriptItem
+ */
+export type TranscriptItem = {
+    /**
+     * Event Id
+     */
+    event_id: string;
+    /**
+     * Role
+     */
+    role: 'user' | 'assistant';
+    /**
+     * Text
+     */
+    text: string;
+    /**
+     * Timestamp
+     */
+    timestamp: string | null;
+    /**
+     * End Timestamp
+     */
+    end_timestamp: string | null;
+    /**
+     * Start Seconds
+     */
+    start_seconds: number | null;
+    /**
+     * End Seconds
+     */
+    end_seconds: number | null;
+    /**
+     * Turn
+     */
+    turn: number | null;
+    /**
+     * Node Id
+     */
+    node_id: string | null;
+};
+
+/**
+ * TranscriptPage
+ */
+export type TranscriptPage = {
+    /**
+     * Items
+     */
+    items: Array<TranscriptItem>;
+    /**
+     * Total Count
+     */
+    total_count: number;
+    /**
+     * Offset
+     */
+    offset: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Has More
+     */
+    has_more: boolean;
+    /**
+     * Available
+     */
+    available: boolean;
+    /**
+     * Truncated
+     */
+    truncated?: boolean;
+};
+
+/**
  * TransferAgentConfig
  *
  * Configuration for Transfer Agent tools.
@@ -7522,6 +8768,54 @@ export type UltravoxRealtimeLlmConfiguration = {
      * Ultravox voice name or voice ID.
      */
     voice?: string;
+};
+
+/**
+ * UnsuccessfulCall
+ */
+export type UnsuccessfulCall = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Workflow Id
+     */
+    workflow_id: number;
+    /**
+     * Workflow Name
+     */
+    workflow_name: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Duration Seconds
+     */
+    duration_seconds: number | null;
+    /**
+     * Qa Score
+     */
+    qa_score: number | null;
+};
+
+/**
+ * UpdateAgentRequest
+ *
+ * Saves a draft. ``agent`` and ``settings`` replace their stored values when sent.
+ */
+export type UpdateAgentRequest = {
+    /**
+     * Name
+     */
+    name?: string | null;
+    agent?: AgentSpec | null;
+    settings?: WorkflowConfigurationDefaults | null;
 };
 
 /**
@@ -8036,11 +9330,243 @@ export type VonageConfigurationRequest = {
 };
 
 /**
+ * WaveformResponse
+ */
+export type WaveformResponse = {
+    /**
+     * Available
+     */
+    available: boolean;
+    /**
+     * Peaks
+     */
+    peaks: Array<number>;
+    /**
+     * Duration Seconds
+     */
+    duration_seconds: number | null;
+    /**
+     * Sample Rate
+     */
+    sample_rate: number | null;
+    /**
+     * Channels
+     */
+    channels: number | null;
+};
+
+/**
+ * Webhook
+ *
+ * Sends call results to your systems after the call.
+ */
+export type Webhook = {
+    /**
+     * Id
+     *
+     * Stable id; generated when empty.
+     */
+    id?: string | null;
+    /**
+     * Name
+     */
+    name?: string;
+    /**
+     * Enabled
+     */
+    enabled?: boolean;
+    /**
+     * Method
+     */
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    /**
+     * Url
+     */
+    url?: string;
+    /**
+     * Credential Uuid
+     */
+    credential_uuid?: string | null;
+    /**
+     * Headers
+     */
+    headers?: Array<WebhookHeader>;
+    /**
+     * Payload
+     */
+    payload?: {
+        [key: string]: unknown;
+    };
+};
+
+/**
  * WebhookCredentialType
  *
  * Webhook credential authentication types
  */
 export type WebhookCredentialType = 'none' | 'api_key' | 'bearer_token' | 'basic_auth' | 'custom_header';
+
+/**
+ * WebhookHeader
+ */
+export type WebhookHeader = {
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Value
+     */
+    value: string;
+};
+
+/**
+ * WebhookLogDetail
+ */
+export type WebhookLogDetail = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Workflow Run Id
+     */
+    workflow_run_id: number;
+    /**
+     * Webhook Name
+     */
+    webhook_name: string | null;
+    /**
+     * Http Method
+     */
+    http_method: string;
+    /**
+     * Endpoint Url
+     */
+    endpoint_url: string;
+    /**
+     * Status
+     */
+    status: 'pending' | 'succeeded' | 'dead_letter';
+    /**
+     * Attempt Count
+     */
+    attempt_count: number;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Scheduled For
+     */
+    scheduled_for: string | null;
+    /**
+     * Last Status Code
+     */
+    last_status_code: number | null;
+    /**
+     * Last Error
+     */
+    last_error: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Payload
+     */
+    payload: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * WebhookLogPage
+ */
+export type WebhookLogPage = {
+    /**
+     * Items
+     */
+    items: Array<WebhookLogSummary>;
+    /**
+     * Total Count
+     */
+    total_count: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Total Pages
+     */
+    total_pages: number;
+};
+
+/**
+ * WebhookLogSummary
+ */
+export type WebhookLogSummary = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Workflow Run Id
+     */
+    workflow_run_id: number;
+    /**
+     * Webhook Name
+     */
+    webhook_name: string | null;
+    /**
+     * Http Method
+     */
+    http_method: string;
+    /**
+     * Endpoint Url
+     */
+    endpoint_url: string;
+    /**
+     * Status
+     */
+    status: 'pending' | 'succeeded' | 'dead_letter';
+    /**
+     * Attempt Count
+     */
+    attempt_count: number;
+    /**
+     * Max Attempts
+     */
+    max_attempts: number;
+    /**
+     * Scheduled For
+     */
+    scheduled_for: string | null;
+    /**
+     * Last Status Code
+     */
+    last_status_code: number | null;
+    /**
+     * Last Error
+     */
+    last_error: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
 
 /**
  * WidgetTexts
@@ -8279,6 +9805,30 @@ export type WorkflowListResponse = {
      * Workflow Uuid
      */
     workflow_uuid?: string | null;
+};
+
+/**
+ * WorkflowLogOption
+ */
+export type WorkflowLogOption = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Name
+     */
+    name: string;
+};
+
+/**
+ * WorkflowLogOptions
+ */
+export type WorkflowLogOptions = {
+    /**
+     * Items
+     */
+    items: Array<WorkflowLogOption>;
 };
 
 /**
@@ -9447,6 +10997,1406 @@ export type HandleVonageEventsWithoutRunApiV1TelephonyVonageEventsPostResponses 
     200: unknown;
 };
 
+export type ListCallsApiV1LogsCallsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Workflow Ids
+         */
+        workflow_ids?: Array<number>;
+        /**
+         * Definition Ids
+         */
+        definition_ids?: Array<number>;
+        /**
+         * Channels
+         */
+        channels?: Array<'telephony' | 'web' | 'chat'>;
+        /**
+         * Directions
+         */
+        directions?: Array<'inbound' | 'outbound'>;
+        /**
+         * Ended Reasons
+         */
+        ended_reasons?: Array<string>;
+        /**
+         * Run Id
+         */
+        run_id?: number | null;
+        /**
+         * Provider Call Id
+         */
+        provider_call_id?: string | null;
+        /**
+         * Customer Number
+         */
+        customer_number?: string | null;
+        /**
+         * Assistant Number
+         */
+        assistant_number?: string | null;
+        /**
+         * Completed
+         */
+        completed?: boolean | null;
+        /**
+         * Min Duration
+         */
+        min_duration?: number | null;
+        /**
+         * Max Duration
+         */
+        max_duration?: number | null;
+        /**
+         * Sort By
+         */
+        sort_by?: 'created_at' | 'duration';
+        /**
+         * Sort Order
+         */
+        sort_order?: 'asc' | 'desc';
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+        /**
+         * Cursor
+         */
+        cursor?: string | null;
+    };
+    url: '/api/v1/logs/calls';
+};
+
+export type ListCallsApiV1LogsCallsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListCallsApiV1LogsCallsGetError = ListCallsApiV1LogsCallsGetErrors[keyof ListCallsApiV1LogsCallsGetErrors];
+
+export type ListCallsApiV1LogsCallsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CallLogPage;
+};
+
+export type ListCallsApiV1LogsCallsGetResponse = ListCallsApiV1LogsCallsGetResponses[keyof ListCallsApiV1LogsCallsGetResponses];
+
+export type ListChatsApiV1LogsChatsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Workflow Ids
+         */
+        workflow_ids?: Array<number>;
+        /**
+         * Definition Ids
+         */
+        definition_ids?: Array<number>;
+        /**
+         * Channels
+         */
+        channels?: Array<'telephony' | 'web' | 'chat'>;
+        /**
+         * Directions
+         */
+        directions?: Array<'inbound' | 'outbound'>;
+        /**
+         * Ended Reasons
+         */
+        ended_reasons?: Array<string>;
+        /**
+         * Run Id
+         */
+        run_id?: number | null;
+        /**
+         * Provider Call Id
+         */
+        provider_call_id?: string | null;
+        /**
+         * Customer Number
+         */
+        customer_number?: string | null;
+        /**
+         * Assistant Number
+         */
+        assistant_number?: string | null;
+        /**
+         * Completed
+         */
+        completed?: boolean | null;
+        /**
+         * Min Duration
+         */
+        min_duration?: number | null;
+        /**
+         * Max Duration
+         */
+        max_duration?: number | null;
+        /**
+         * Sort By
+         */
+        sort_by?: 'created_at' | 'duration';
+        /**
+         * Sort Order
+         */
+        sort_order?: 'asc' | 'desc';
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+        /**
+         * Cursor
+         */
+        cursor?: string | null;
+    };
+    url: '/api/v1/logs/chats';
+};
+
+export type ListChatsApiV1LogsChatsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListChatsApiV1LogsChatsGetError = ListChatsApiV1LogsChatsGetErrors[keyof ListChatsApiV1LogsChatsGetErrors];
+
+export type ListChatsApiV1LogsChatsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CallLogPage;
+};
+
+export type ListChatsApiV1LogsChatsGetResponse = ListChatsApiV1LogsChatsGetResponses[keyof ListChatsApiV1LogsChatsGetResponses];
+
+export type ExportCallsApiV1LogsCallsExportGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Workflow Ids
+         */
+        workflow_ids?: Array<number>;
+        /**
+         * Definition Ids
+         */
+        definition_ids?: Array<number>;
+        /**
+         * Channels
+         */
+        channels?: Array<'telephony' | 'web' | 'chat'>;
+        /**
+         * Directions
+         */
+        directions?: Array<'inbound' | 'outbound'>;
+        /**
+         * Ended Reasons
+         */
+        ended_reasons?: Array<string>;
+        /**
+         * Run Id
+         */
+        run_id?: number | null;
+        /**
+         * Provider Call Id
+         */
+        provider_call_id?: string | null;
+        /**
+         * Customer Number
+         */
+        customer_number?: string | null;
+        /**
+         * Assistant Number
+         */
+        assistant_number?: string | null;
+        /**
+         * Completed
+         */
+        completed?: boolean | null;
+        /**
+         * Min Duration
+         */
+        min_duration?: number | null;
+        /**
+         * Max Duration
+         */
+        max_duration?: number | null;
+        /**
+         * Sort By
+         */
+        sort_by?: 'created_at' | 'duration';
+        /**
+         * Sort Order
+         */
+        sort_order?: 'asc' | 'desc';
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+        /**
+         * Cursor
+         */
+        cursor?: string | null;
+    };
+    url: '/api/v1/logs/calls/export';
+};
+
+export type ExportCallsApiV1LogsCallsExportGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ExportCallsApiV1LogsCallsExportGetError = ExportCallsApiV1LogsCallsExportGetErrors[keyof ExportCallsApiV1LogsCallsExportGetErrors];
+
+export type ExportCallsApiV1LogsCallsExportGetResponses = {
+    /**
+     * CSV download
+     */
+    200: string;
+};
+
+export type ExportCallsApiV1LogsCallsExportGetResponse = ExportCallsApiV1LogsCallsExportGetResponses[keyof ExportCallsApiV1LogsCallsExportGetResponses];
+
+export type WorkflowOptionsApiV1LogsWorkflowsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Search
+         */
+        search?: string;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/logs/workflows';
+};
+
+export type WorkflowOptionsApiV1LogsWorkflowsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WorkflowOptionsApiV1LogsWorkflowsGetError = WorkflowOptionsApiV1LogsWorkflowsGetErrors[keyof WorkflowOptionsApiV1LogsWorkflowsGetErrors];
+
+export type WorkflowOptionsApiV1LogsWorkflowsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WorkflowLogOptions;
+};
+
+export type WorkflowOptionsApiV1LogsWorkflowsGetResponse = WorkflowOptionsApiV1LogsWorkflowsGetResponses[keyof WorkflowOptionsApiV1LogsWorkflowsGetResponses];
+
+export type CallDetailApiV1LogsCallsRunIdGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}';
+};
+
+export type CallDetailApiV1LogsCallsRunIdGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallDetailApiV1LogsCallsRunIdGetError = CallDetailApiV1LogsCallsRunIdGetErrors[keyof CallDetailApiV1LogsCallsRunIdGetErrors];
+
+export type CallDetailApiV1LogsCallsRunIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CallLogDetail;
+};
+
+export type CallDetailApiV1LogsCallsRunIdGetResponse = CallDetailApiV1LogsCallsRunIdGetResponses[keyof CallDetailApiV1LogsCallsRunIdGetResponses];
+
+export type CallTranscriptApiV1LogsCallsRunIdTranscriptGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: {
+        /**
+         * Offset
+         */
+        offset?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/logs/calls/{run_id}/transcript';
+};
+
+export type CallTranscriptApiV1LogsCallsRunIdTranscriptGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallTranscriptApiV1LogsCallsRunIdTranscriptGetError = CallTranscriptApiV1LogsCallsRunIdTranscriptGetErrors[keyof CallTranscriptApiV1LogsCallsRunIdTranscriptGetErrors];
+
+export type CallTranscriptApiV1LogsCallsRunIdTranscriptGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TranscriptPage;
+};
+
+export type CallTranscriptApiV1LogsCallsRunIdTranscriptGetResponse = CallTranscriptApiV1LogsCallsRunIdTranscriptGetResponses[keyof CallTranscriptApiV1LogsCallsRunIdTranscriptGetResponses];
+
+export type CallEventsApiV1LogsCallsRunIdEventsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: {
+        /**
+         * Offset
+         */
+        offset?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+        /**
+         * Source
+         */
+        source?: 'realtime' | 'diagnostics';
+    };
+    url: '/api/v1/logs/calls/{run_id}/events';
+};
+
+export type CallEventsApiV1LogsCallsRunIdEventsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallEventsApiV1LogsCallsRunIdEventsGetError = CallEventsApiV1LogsCallsRunIdEventsGetErrors[keyof CallEventsApiV1LogsCallsRunIdEventsGetErrors];
+
+export type CallEventsApiV1LogsCallsRunIdEventsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: EventPage;
+};
+
+export type CallEventsApiV1LogsCallsRunIdEventsGetResponse = CallEventsApiV1LogsCallsRunIdEventsGetResponses[keyof CallEventsApiV1LogsCallsRunIdEventsGetResponses];
+
+export type CallMessagesApiV1LogsCallsRunIdMessagesGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: {
+        /**
+         * Offset
+         */
+        offset?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/logs/calls/{run_id}/messages';
+};
+
+export type CallMessagesApiV1LogsCallsRunIdMessagesGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallMessagesApiV1LogsCallsRunIdMessagesGetError = CallMessagesApiV1LogsCallsRunIdMessagesGetErrors[keyof CallMessagesApiV1LogsCallsRunIdMessagesGetErrors];
+
+export type CallMessagesApiV1LogsCallsRunIdMessagesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: EventPage;
+};
+
+export type CallMessagesApiV1LogsCallsRunIdMessagesGetResponse = CallMessagesApiV1LogsCallsRunIdMessagesGetResponses[keyof CallMessagesApiV1LogsCallsRunIdMessagesGetResponses];
+
+export type CallAnalysisApiV1LogsCallsRunIdAnalysisGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/analysis';
+};
+
+export type CallAnalysisApiV1LogsCallsRunIdAnalysisGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallAnalysisApiV1LogsCallsRunIdAnalysisGetError = CallAnalysisApiV1LogsCallsRunIdAnalysisGetErrors[keyof CallAnalysisApiV1LogsCallsRunIdAnalysisGetErrors];
+
+export type CallAnalysisApiV1LogsCallsRunIdAnalysisGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AnalysisResponse;
+};
+
+export type CallAnalysisApiV1LogsCallsRunIdAnalysisGetResponse = CallAnalysisApiV1LogsCallsRunIdAnalysisGetResponses[keyof CallAnalysisApiV1LogsCallsRunIdAnalysisGetResponses];
+
+export type CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/structured-outputs';
+};
+
+export type CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetError = CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetErrors[keyof CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetErrors];
+
+export type CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: StructuredOutputsResponse;
+};
+
+export type CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetResponse = CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetResponses[keyof CallOutputsApiV1LogsCallsRunIdStructuredOutputsGetResponses];
+
+export type CallCostApiV1LogsCallsRunIdCostGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/cost';
+};
+
+export type CallCostApiV1LogsCallsRunIdCostGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallCostApiV1LogsCallsRunIdCostGetError = CallCostApiV1LogsCallsRunIdCostGetErrors[keyof CallCostApiV1LogsCallsRunIdCostGetErrors];
+
+export type CallCostApiV1LogsCallsRunIdCostGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CostResponse;
+};
+
+export type CallCostApiV1LogsCallsRunIdCostGetResponse = CallCostApiV1LogsCallsRunIdCostGetResponses[keyof CallCostApiV1LogsCallsRunIdCostGetResponses];
+
+export type CallLatencyApiV1LogsCallsRunIdLatencyGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/latency';
+};
+
+export type CallLatencyApiV1LogsCallsRunIdLatencyGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CallLatencyApiV1LogsCallsRunIdLatencyGetError = CallLatencyApiV1LogsCallsRunIdLatencyGetErrors[keyof CallLatencyApiV1LogsCallsRunIdLatencyGetErrors];
+
+export type CallLatencyApiV1LogsCallsRunIdLatencyGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: LatencyResponse;
+};
+
+export type CallLatencyApiV1LogsCallsRunIdLatencyGetResponse = CallLatencyApiV1LogsCallsRunIdLatencyGetResponses[keyof CallLatencyApiV1LogsCallsRunIdLatencyGetResponses];
+
+export type WaveformApiV1LogsCallsRunIdWaveformTrackGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+        /**
+         * Track
+         */
+        track: 'mixed' | 'user' | 'bot';
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/waveform/{track}';
+};
+
+export type WaveformApiV1LogsCallsRunIdWaveformTrackGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WaveformApiV1LogsCallsRunIdWaveformTrackGetError = WaveformApiV1LogsCallsRunIdWaveformTrackGetErrors[keyof WaveformApiV1LogsCallsRunIdWaveformTrackGetErrors];
+
+export type WaveformApiV1LogsCallsRunIdWaveformTrackGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WaveformResponse;
+};
+
+export type WaveformApiV1LogsCallsRunIdWaveformTrackGetResponse = WaveformApiV1LogsCallsRunIdWaveformTrackGetResponses[keyof WaveformApiV1LogsCallsRunIdWaveformTrackGetResponses];
+
+export type ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+        /**
+         * Track
+         */
+        track: 'mixed' | 'user' | 'bot' | 'transcript';
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/artifacts/{track}/url';
+};
+
+export type ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Artifact storage temporarily unavailable
+     */
+    503: unknown;
+};
+
+export type ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetError = ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetErrors[keyof ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetErrors];
+
+export type ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ArtifactUrlResponse;
+};
+
+export type ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetResponse = ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetResponses[keyof ArtifactUrlApiV1LogsCallsRunIdArtifactsTrackUrlGetResponses];
+
+export type ArtifactApiV1LogsCallsRunIdArtifactsTrackGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+        /**
+         * Track
+         */
+        track: 'mixed' | 'user' | 'bot' | 'transcript';
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/artifacts/{track}';
+};
+
+export type ArtifactApiV1LogsCallsRunIdArtifactsTrackGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Artifact storage temporarily unavailable
+     */
+    503: unknown;
+};
+
+export type ArtifactApiV1LogsCallsRunIdArtifactsTrackGetError = ArtifactApiV1LogsCallsRunIdArtifactsTrackGetErrors[keyof ArtifactApiV1LogsCallsRunIdArtifactsTrackGetErrors];
+
+export type GetFeedbackApiV1LogsCallsRunIdFeedbackGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/feedback';
+};
+
+export type GetFeedbackApiV1LogsCallsRunIdFeedbackGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetFeedbackApiV1LogsCallsRunIdFeedbackGetError = GetFeedbackApiV1LogsCallsRunIdFeedbackGetErrors[keyof GetFeedbackApiV1LogsCallsRunIdFeedbackGetErrors];
+
+export type GetFeedbackApiV1LogsCallsRunIdFeedbackGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: FeedbackPage;
+};
+
+export type GetFeedbackApiV1LogsCallsRunIdFeedbackGetResponse = GetFeedbackApiV1LogsCallsRunIdFeedbackGetResponses[keyof GetFeedbackApiV1LogsCallsRunIdFeedbackGetResponses];
+
+export type PutFeedbackApiV1LogsCallsRunIdFeedbackPutData = {
+    body: CallFeedbackRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/calls/{run_id}/feedback';
+};
+
+export type PutFeedbackApiV1LogsCallsRunIdFeedbackPutErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PutFeedbackApiV1LogsCallsRunIdFeedbackPutError = PutFeedbackApiV1LogsCallsRunIdFeedbackPutErrors[keyof PutFeedbackApiV1LogsCallsRunIdFeedbackPutErrors];
+
+export type PutFeedbackApiV1LogsCallsRunIdFeedbackPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: FeedbackItem;
+};
+
+export type PutFeedbackApiV1LogsCallsRunIdFeedbackPutResponse = PutFeedbackApiV1LogsCallsRunIdFeedbackPutResponses[keyof PutFeedbackApiV1LogsCallsRunIdFeedbackPutResponses];
+
+export type SessionsApiV1LogsSessionsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Run Id
+         */
+        run_id?: number | null;
+        /**
+         * Status
+         */
+        status?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/logs/sessions';
+};
+
+export type SessionsApiV1LogsSessionsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SessionsApiV1LogsSessionsGetError = SessionsApiV1LogsSessionsGetErrors[keyof SessionsApiV1LogsSessionsGetErrors];
+
+export type SessionsApiV1LogsSessionsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SessionLogPage;
+};
+
+export type SessionsApiV1LogsSessionsGetResponse = SessionsApiV1LogsSessionsGetResponses[keyof SessionsApiV1LogsSessionsGetResponses];
+
+export type SessionDetailApiV1LogsSessionsRunIdGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/sessions/{run_id}';
+};
+
+export type SessionDetailApiV1LogsSessionsRunIdGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SessionDetailApiV1LogsSessionsRunIdGetError = SessionDetailApiV1LogsSessionsRunIdGetErrors[keyof SessionDetailApiV1LogsSessionsRunIdGetErrors];
+
+export type SessionDetailApiV1LogsSessionsRunIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SessionLogSummary;
+};
+
+export type SessionDetailApiV1LogsSessionsRunIdGetResponse = SessionDetailApiV1LogsSessionsRunIdGetResponses[keyof SessionDetailApiV1LogsSessionsRunIdGetResponses];
+
+export type WebhooksApiV1LogsWebhooksGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Run Id
+         */
+        run_id?: number | null;
+        /**
+         * Status
+         */
+        status?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/logs/webhooks';
+};
+
+export type WebhooksApiV1LogsWebhooksGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WebhooksApiV1LogsWebhooksGetError = WebhooksApiV1LogsWebhooksGetErrors[keyof WebhooksApiV1LogsWebhooksGetErrors];
+
+export type WebhooksApiV1LogsWebhooksGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookLogPage;
+};
+
+export type WebhooksApiV1LogsWebhooksGetResponse = WebhooksApiV1LogsWebhooksGetResponses[keyof WebhooksApiV1LogsWebhooksGetResponses];
+
+export type WebhookApiV1LogsWebhooksDeliveryIdGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Delivery Id
+         */
+        delivery_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/webhooks/{delivery_id}';
+};
+
+export type WebhookApiV1LogsWebhooksDeliveryIdGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type WebhookApiV1LogsWebhooksDeliveryIdGetError = WebhookApiV1LogsWebhooksDeliveryIdGetErrors[keyof WebhookApiV1LogsWebhooksDeliveryIdGetErrors];
+
+export type WebhookApiV1LogsWebhooksDeliveryIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookLogDetail;
+};
+
+export type WebhookApiV1LogsWebhooksDeliveryIdGetResponse = WebhookApiV1LogsWebhooksDeliveryIdGetResponses[keyof WebhookApiV1LogsWebhooksDeliveryIdGetResponses];
+
+export type ApiLogsApiV1LogsApiGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         */
+        end_at?: string | null;
+        /**
+         * Run Id
+         */
+        run_id?: number | null;
+        /**
+         * Status
+         */
+        status?: string | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/logs/api';
+};
+
+export type ApiLogsApiV1LogsApiGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApiLogsApiV1LogsApiGetError = ApiLogsApiV1LogsApiGetErrors[keyof ApiLogsApiV1LogsApiGetErrors];
+
+export type ApiLogsApiV1LogsApiGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApiRequestLogPage;
+};
+
+export type ApiLogsApiV1LogsApiGetResponse = ApiLogsApiV1LogsApiGetResponses[keyof ApiLogsApiV1LogsApiGetResponses];
+
+export type ApiLogApiV1LogsApiLogIdGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Log Id
+         */
+        log_id: number;
+    };
+    query?: never;
+    url: '/api/v1/logs/api/{log_id}';
+};
+
+export type ApiLogApiV1LogsApiLogIdGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApiLogApiV1LogsApiLogIdGetError = ApiLogApiV1LogsApiLogIdGetErrors[keyof ApiLogApiV1LogsApiLogIdGetErrors];
+
+export type ApiLogApiV1LogsApiLogIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApiRequestLogDetail;
+};
+
+export type ApiLogApiV1LogsApiLogIdGetResponse = ApiLogApiV1LogsApiLogIdGetResponses[keyof ApiLogApiV1LogsApiLogIdGetResponses];
+
+export type GetMetricsApiV1MetricsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Start At
+         *
+         * Inclusive. Defaults to 30 days before end_at.
+         */
+        start_at?: string | null;
+        /**
+         * End At
+         *
+         * Exclusive. Defaults to now.
+         */
+        end_at?: string | null;
+        /**
+         * Group By
+         */
+        group_by?: 'hour' | 'day' | 'week';
+        /**
+         * Timezone
+         *
+         * IANA zone for bucket boundaries, e.g. Asia/Kolkata.
+         */
+        timezone?: string;
+        /**
+         * Workflow Ids
+         */
+        workflow_ids?: Array<number>;
+    };
+    url: '/api/v1/metrics';
+};
+
+export type GetMetricsApiV1MetricsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetMetricsApiV1MetricsGetError = GetMetricsApiV1MetricsGetErrors[keyof GetMetricsApiV1MetricsGetErrors];
+
+export type GetMetricsApiV1MetricsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MetricsResponse;
+};
+
+export type GetMetricsApiV1MetricsGetResponse = GetMetricsApiV1MetricsGetResponses[keyof GetMetricsApiV1MetricsGetResponses];
+
 export type ImpersonateApiV1SuperuserImpersonatePostData = {
     body: ImpersonateRequest;
     headers?: {
@@ -10552,6 +13502,313 @@ export type GetAmbientNoiseUploadUrlApiV1WorkflowAmbientNoiseUploadUrlPostRespon
 };
 
 export type GetAmbientNoiseUploadUrlApiV1WorkflowAmbientNoiseUploadUrlPostResponse = GetAmbientNoiseUploadUrlApiV1WorkflowAmbientNoiseUploadUrlPostResponses[keyof GetAmbientNoiseUploadUrlApiV1WorkflowAmbientNoiseUploadUrlPostResponses];
+
+export type ListAgentsApiV1AgentsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Status
+         */
+        status?: string;
+    };
+    url: '/api/v1/agents';
+};
+
+export type ListAgentsApiV1AgentsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListAgentsApiV1AgentsGetError = ListAgentsApiV1AgentsGetErrors[keyof ListAgentsApiV1AgentsGetErrors];
+
+export type ListAgentsApiV1AgentsGetResponses = {
+    /**
+     * Response List Agents Api V1 Agents Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentListItem>;
+};
+
+export type ListAgentsApiV1AgentsGetResponse = ListAgentsApiV1AgentsGetResponses[keyof ListAgentsApiV1AgentsGetResponses];
+
+export type CreateAgentApiV1AgentsPostData = {
+    body: CreateAgentRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/agents';
+};
+
+export type CreateAgentApiV1AgentsPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateAgentApiV1AgentsPostError = CreateAgentApiV1AgentsPostErrors[keyof CreateAgentApiV1AgentsPostErrors];
+
+export type CreateAgentApiV1AgentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentResponse;
+};
+
+export type CreateAgentApiV1AgentsPostResponse = CreateAgentApiV1AgentsPostResponses[keyof CreateAgentApiV1AgentsPostResponses];
+
+export type GetAgentApiV1AgentsAgentIdGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}';
+};
+
+export type GetAgentApiV1AgentsAgentIdGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetAgentApiV1AgentsAgentIdGetError = GetAgentApiV1AgentsAgentIdGetErrors[keyof GetAgentApiV1AgentsAgentIdGetErrors];
+
+export type GetAgentApiV1AgentsAgentIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentResponse;
+};
+
+export type GetAgentApiV1AgentsAgentIdGetResponse = GetAgentApiV1AgentsAgentIdGetResponses[keyof GetAgentApiV1AgentsAgentIdGetResponses];
+
+export type UpdateAgentApiV1AgentsAgentIdPutData = {
+    body: UpdateAgentRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}';
+};
+
+export type UpdateAgentApiV1AgentsAgentIdPutErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateAgentApiV1AgentsAgentIdPutError = UpdateAgentApiV1AgentsAgentIdPutErrors[keyof UpdateAgentApiV1AgentsAgentIdPutErrors];
+
+export type UpdateAgentApiV1AgentsAgentIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentResponse;
+};
+
+export type UpdateAgentApiV1AgentsAgentIdPutResponse = UpdateAgentApiV1AgentsAgentIdPutResponses[keyof UpdateAgentApiV1AgentsAgentIdPutResponses];
+
+export type PublishAgentApiV1AgentsAgentIdPublishPostData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/publish';
+};
+
+export type PublishAgentApiV1AgentsAgentIdPublishPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PublishAgentApiV1AgentsAgentIdPublishPostError = PublishAgentApiV1AgentsAgentIdPublishPostErrors[keyof PublishAgentApiV1AgentsAgentIdPublishPostErrors];
+
+export type PublishAgentApiV1AgentsAgentIdPublishPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PublishAgentResponse;
+};
+
+export type PublishAgentApiV1AgentsAgentIdPublishPostResponse = PublishAgentApiV1AgentsAgentIdPublishPostResponses[keyof PublishAgentApiV1AgentsAgentIdPublishPostResponses];
+
+export type ConvertAgentApiV1AgentsAgentIdConvertPostData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/convert';
+};
+
+export type ConvertAgentApiV1AgentsAgentIdConvertPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConvertAgentApiV1AgentsAgentIdConvertPostError = ConvertAgentApiV1AgentsAgentIdConvertPostErrors[keyof ConvertAgentApiV1AgentsAgentIdConvertPostErrors];
+
+export type ConvertAgentApiV1AgentsAgentIdConvertPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentResponse;
+};
+
+export type ConvertAgentApiV1AgentsAgentIdConvertPostResponse = ConvertAgentApiV1AgentsAgentIdConvertPostResponses[keyof ConvertAgentApiV1AgentsAgentIdConvertPostResponses];
+
+export type ListAgentVersionsApiV1AgentsAgentIdVersionsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/versions';
+};
+
+export type ListAgentVersionsApiV1AgentsAgentIdVersionsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListAgentVersionsApiV1AgentsAgentIdVersionsGetError = ListAgentVersionsApiV1AgentsAgentIdVersionsGetErrors[keyof ListAgentVersionsApiV1AgentsAgentIdVersionsGetErrors];
+
+export type ListAgentVersionsApiV1AgentsAgentIdVersionsGetResponses = {
+    /**
+     * Response List Agent Versions Api V1 Agents  Agent Id  Versions Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentVersion>;
+};
+
+export type ListAgentVersionsApiV1AgentsAgentIdVersionsGetResponse = ListAgentVersionsApiV1AgentsAgentIdVersionsGetResponses[keyof ListAgentVersionsApiV1AgentsAgentIdVersionsGetResponses];
 
 export type CreateTextChatSessionApiV1WorkflowWorkflowIdTextChatSessionsPostData = {
     body: CreateTextChatSessionRequest;
