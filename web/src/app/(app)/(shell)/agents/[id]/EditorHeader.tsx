@@ -17,14 +17,14 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 
-import { getWorkflowVersionsApiV1WorkflowWorkflowIdVersionsGet } from "@/client";
+import { listAgentVersionsApiV1AgentsAgentIdVersionsGet, type AgentSpec } from "@/client";
 import { CopyButton, Dropdown } from "@/components/app/client";
 import { btn } from "@/components/app/ui";
 import { dateTime } from "@/lib/format";
 
 import { useAgentsShell } from "../AgentsShell";
 
-export type Version = { id: number; number: number | null; status: string; at: string; json: unknown; configs: unknown };
+export type Version = { id: number; number: number | null; status: string; at: string; kind: "agent" | "multi_step"; agent: AgentSpec; settings: Record<string, unknown> };
 type SaveState = "saved" | "dirty" | "saving" | "error";
 
 const STATUS_TONE: Record<string, string> = {
@@ -36,9 +36,10 @@ const STATUS_TONE: Record<string, string> = {
 function VersionMenu({ agentId, status, number, onRestore }: { agentId: number; status: string | null; number: number | null; onRestore: (v: Version) => void }) {
   const [versions, setVersions] = useState<Version[] | null>(null);
   const load = async () => {
-    const res = await getWorkflowVersionsApiV1WorkflowWorkflowIdVersionsGet({ path: { workflow_id: agentId } }).catch(() => null);
-    const list = (res?.data ?? []) as { id: number; version_number: number | null; status: string; created_at: string; published_at: string | null; workflow_json: unknown; workflow_configurations: unknown }[];
-    setVersions(list.map((v) => ({ id: v.id, number: v.version_number, status: v.status, at: v.published_at ?? v.created_at, json: v.workflow_json, configs: v.workflow_configurations })));
+    const res = await listAgentVersionsApiV1AgentsAgentIdVersionsGet({ path: { agent_id: agentId } }).catch(() => null);
+    setVersions(
+      (res?.data ?? []).map((v) => ({ id: v.id, number: v.version_number, status: v.status, at: v.published_at ?? v.created_at, kind: v.kind, agent: v.agent, settings: v.settings })),
+    );
   };
 
   return (
