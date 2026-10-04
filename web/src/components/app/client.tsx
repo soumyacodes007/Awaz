@@ -4,7 +4,44 @@ import { Check, Copy, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 
-export type MenuItem = { label: string; hint?: string; icon?: React.ComponentType<{ className?: string }>; onSelect: () => void; danger?: boolean; disabled?: boolean };
+/** Anchored panel with arbitrary content; closes on outside click and Escape. */
+export function Popover({
+  trigger,
+  children,
+  align = "left",
+  width = 280,
+}: {
+  trigger: (props: { open: boolean; toggle: () => void }) => React.ReactNode;
+  children: (close: () => void) => React.ReactNode;
+  align?: "left" | "right";
+  width?: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("mousedown", close);
+    window.addEventListener("keydown", esc);
+    return () => {
+      window.removeEventListener("mousedown", close);
+      window.removeEventListener("keydown", esc);
+    };
+  }, [open]);
+  return (
+    <div ref={ref} className="relative">
+      {trigger({ open, toggle: () => setOpen((o) => !o) })}
+      {open ? (
+        <div style={{ width }} className={`absolute top-[calc(100%+6px)] z-40 rounded-md border bg-background p-2 shadow-md ${align === "right" ? "right-0" : "left-0"}`}>
+          {children(() => setOpen(false))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export type MenuItem ={ label: string; hint?: string; icon?: React.ComponentType<{ className?: string }>; onSelect: () => void; danger?: boolean; disabled?: boolean };
 
 /** shadcn-style dropdown: any trigger, a list of items, closes on outside click. */
 export function Dropdown({
