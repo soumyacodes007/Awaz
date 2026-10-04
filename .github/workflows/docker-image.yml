@@ -65,9 +65,6 @@ jobs:
           - name: dograh-api
             dockerfile: api/Dockerfile
             context: .
-          - name: dograh-ui
-            dockerfile: ui/Dockerfile
-            context: .
         platform:
           - name: linux/amd64
             runner: ubuntu-24.04
@@ -145,13 +142,6 @@ jobs:
           merge-multiple: true
           path: /tmp/digests/dograh-api
 
-      - name: Download UI digests
-        uses: actions/download-artifact@v4
-        with:
-          pattern: digest-dograh-ui-*
-          merge-multiple: true
-          path: /tmp/digests/dograh-ui
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -211,9 +201,7 @@ jobs:
           }
 
           inspect_digests dograh-api
-          inspect_digests dograh-ui
           create_manifests dograh-api
-          create_manifests dograh-ui
 
   notify:
     needs:
