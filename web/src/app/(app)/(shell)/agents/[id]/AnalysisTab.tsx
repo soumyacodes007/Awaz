@@ -4,49 +4,52 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { Switch, SwitchRow } from "@/components/app/client";
 import { btn, FormRow, inputCls } from "@/components/app/ui";
-import type { AgentFields, Qa, Variable } from "@/lib/agent";
+import type { Agent, Qa, Variable } from "@/lib/agent";
 
 import { Section } from "./types";
 
 type Disposition = { code: string; description: string };
 
-const DEFAULT_QA: Qa = { enabled: true, systemPrompt: "", minCallDuration: 15, sampleRate: 100, includeVoicemail: false };
+const DEFAULT_QA: Qa = { enabled: true, system_prompt: null, min_call_duration: 15, sample_rate: 100, include_voicemail: false };
 
 export function AnalysisTab({
-  fields,
-  set,
+  agent,
+  update,
   dispositions,
   onDispositions,
-  qa,
-  onQa,
+  qaDefaultPrompt,
   readOnly,
 }: {
-  fields: AgentFields;
-  set: <K extends keyof AgentFields>(k: K, v: AgentFields[K]) => void;
+  agent: Agent;
+  update: (patch: Partial<Agent>) => void;
   dispositions: Disposition[];
   onDispositions: (v: Disposition[]) => void;
-  qa: Qa | null;
-  onQa: (v: Qa | null) => void;
+  qaDefaultPrompt: string;
   readOnly: boolean;
 }) {
-  const vars = fields.variables;
-  const setVar = (i: number, patch: Partial<Variable>) => set("variables", vars.map((v, j) => (j === i ? { ...v, ...patch } : v)));
+  const extraction = agent.extraction;
+  const setExtraction = (patch: Partial<Agent["extraction"]>) => update({ extraction: { ...extraction, ...patch } });
+  const vars = extraction.variables;
+  const setVars = (variables: Variable[]) => setExtraction({ variables });
+  const setVar = (i: number, patch: Partial<Variable>) => setVars(vars.map((v, j) => (j === i ? { ...v, ...patch } : v)));
+  const qa = agent.quality_review;
+  const onQa = (v: Qa | null) => update({ quality_review: v });
 
   return (
     <fieldset disabled={readOnly} className="space-y-5">
       <Section
         title="Structured outputs"
         sub="Data the agent pulls out of every call, like a booking date or whether the lead is interested. It shows up on each call and in webhooks."
-        actions={<Switch checked={fields.extractionEnabled} onChange={(v) => set("extractionEnabled", v)} label="Extract structured outputs" />}
+        actions={<Switch checked={extraction.enabled} onChange={(v) => setExtraction({ enabled: v })} label="Extract structured outputs" />}
       >
-        {fields.extractionEnabled ? (
+        {extraction.enabled ? (
           <div className="space-y-4">
             <FormRow label="Instructions" htmlFor="x-prompt" hint="Optional guidance for the extractor across all fields.">
               <textarea
                 id="x-prompt"
                 rows={2}
-                value={fields.extractionPrompt}
-                onChange={(e) => set("extractionPrompt", e.target.value)}
+                value={extraction.prompt ?? ""}
+                onChange={(e) => setExtraction({ prompt: e.target.value || null })}
                 placeholder="Extract details only if the caller said them explicitly."
                 className={`${inputCls} resize-y py-2.5`}
               />
@@ -69,13 +72,13 @@ export function AnalysisTab({
                   <input
                     aria-label="What to look for"
                     value={v.prompt ?? ""}
-                    onChange={(e) => setVar(i, { prompt: e.target.value })}
+                    onChange={(e) => setVar(i, { prompt: e.target.value || null })}
                     placeholder="The date the caller wants to visit"
                     className={`${inputCls} h-9`}
                   />
                   <button
                     type="button"
-                    onClick={() => set("variables", vars.filter((_, j) => j !== i))}
+                    onClick={() => setVars(vars.filter((_, j) => j !== i))}
                     aria-label="Remove field"
                     className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-accent hover:text-red-600"
                   >
@@ -83,7 +86,7 @@ export function AnalysisTab({
                   </button>
                 </div>
               ))}
-              <button type="button" onClick={() => set("variables", [...vars, { name: "", type: "string", prompt: "" }])} className={btn("secondary", "sm")}>
+              <button type="button" onClick={() => setVars([...vars, { name: "", type: "string", prompt: null }])} className={btn("secondary", "sm")}>
                 <Plus className="size-3.5" /> Add field
               </button>
             </div>
@@ -133,16 +136,27 @@ export function AnalysisTab({
       <Section
         title="Quality review"
         sub="After each call, an LLM reviews the transcript and scores it. Results appear on the call's page."
-        actions={<Switch checked={Boolean(qa)} onChange={(v) => onQa(v ? (qa ?? DEFAULT_QA) : null)} label="Quality review" />}
+        actions={<Switch checked={Boolean(qa)} onChange={(v) => onQa(v ? (qa ?? { ...DEFAULT_QA, system_prompt: qaDefaultPrompt || null }) : null)} label="Quality review" />}
       >
         {qa ? (
           <div className="space-y-4">
-            <FormRow label="Reviewer instructions" htmlFor="qa-prompt" hint="Leave empty to use the default review: summary, sentiment, quality score and tags.">
+            <FormRow label="Reviewer instructions" htmlFor="qa-prompt" hint={
+                qa.system_prompt?.trim() ? (
+                  "Supports {{transcript}}, {{metrics}}, {{node_summary}} and {{previous_conversation_summary}}. Return JSON with summary, tags, call_quality_score and overall_sentiment, plus any fields of your own."
+                ) : (
+                  <span>
+                    Empty uses Dograh&apos;s default reviewer.{" "}
+                    <button type="button" onClick={() => onQa({ ...qa, system_prompt: qaDefaultPrompt || null })} className="font-medium underline underline-offset-4">
+                      Show it
+                    </button>
+                  </span>
+                )
+              }>
               <textarea
                 id="qa-prompt"
                 rows={4}
-                value={qa.systemPrompt}
-                onChange={(e) => onQa({ ...qa, systemPrompt: e.target.value })}
+                value={qa.system_prompt ?? ""}
+                onChange={(e) => onQa({ ...qa, system_prompt: e.target.value || null })}
                 className={`${inputCls} resize-y py-2.5 font-mono text-[13px]`}
               />
             </FormRow>
@@ -152,24 +166,24 @@ export function AnalysisTab({
                   id="qa-min"
                   type="number"
                   min={0}
-                  value={qa.minCallDuration}
-                  onChange={(e) => onQa({ ...qa, minCallDuration: Number(e.target.value) })}
+                  value={qa.min_call_duration}
+                  onChange={(e) => onQa({ ...qa, min_call_duration: Number(e.target.value) })}
                   className={`${inputCls} h-10`}
                 />
               </FormRow>
-              <FormRow label={`Review ${qa.sampleRate}% of calls`} htmlFor="qa-rate">
+              <FormRow label={`Review ${qa.sample_rate}% of calls`} htmlFor="qa-rate">
                 <input
                   id="qa-rate"
                   type="range"
                   min={1}
                   max={100}
-                  value={qa.sampleRate}
-                  onChange={(e) => onQa({ ...qa, sampleRate: Number(e.target.value) })}
+                  value={qa.sample_rate}
+                  onChange={(e) => onQa({ ...qa, sample_rate: Number(e.target.value) })}
                   className="mt-3 w-full accent-foreground"
                 />
               </FormRow>
             </div>
-            <SwitchRow title="Include voicemail calls" checked={qa.includeVoicemail} onChange={(v) => onQa({ ...qa, includeVoicemail: v })} />
+            <SwitchRow title="Include voicemail calls" checked={qa.include_voicemail} onChange={(v) => onQa({ ...qa, include_voicemail: v })} />
           </div>
         ) : (
           <p className="text-[13px] text-muted-foreground">Off.</p>
