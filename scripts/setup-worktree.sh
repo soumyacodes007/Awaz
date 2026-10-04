@@ -64,8 +64,8 @@ set -u
 echo "==> [3/4] Python deps (--dev; submodule already inited)..."
 ./scripts/setup_requirements.sh --dev
 
-echo "==> [4/4] UI node_modules..."
-( cd ui && npm install )
+echo "==> [4/4] web node_modules..."
+( cd web && npm install )
 
 # Mark success LAST, so an interrupted run re-provisions on the next open.
 touch "$SENTINEL"
