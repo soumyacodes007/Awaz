@@ -109,7 +109,7 @@ export default async function HomePage() {
                 <ul>
                   {recentRuns.map((r) => (
                     <li key={r.id} className="border-b border-border last:border-b-0">
-                      <Link href={`/runs/${r.workflow_id}/${r.id}`} className="group flex items-center gap-4 px-5 py-3 transition-colors hover:bg-accent">
+                      <Link href={`/logs?call=${r.id}`} className="group flex items-center gap-4 px-5 py-3 transition-colors hover:bg-accent">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted">
                           <PhoneCall className="size-4 text-foreground" strokeWidth={1.75} />
                         </span>
