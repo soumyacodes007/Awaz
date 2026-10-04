@@ -23,7 +23,7 @@ sh scripts/format.sh
 ###############################################################################
 # 2 – ESLint autofix inside the Next.js app
 ###############################################################################
-(cd ui && npm run fix-lint)
+(cd web && npm run lint -- --fix)
 
 ###############################################################################
 # 3 – Restage any files changed by the fixers so the commit includes them
