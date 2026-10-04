@@ -40,14 +40,24 @@ class _OrgAttributeSpanProcessor(SpanProcessor):
     """Stamps each span with the current org_id from the async context var."""
 
     def on_start(self, span, parent_context=None):
-        from pipecat.utils.run_context import get_current_org_id
+        from api.services.observability import local_trace
+        from pipecat.utils.run_context import get_current_org_id, get_current_run_id
 
         org_id = get_current_org_id()
         if org_id:
             span.set_attribute("dograh.org_id", str(org_id))
+        run_id = get_current_run_id()
+        if run_id:
+            span.set_attribute("dograh.run_id", str(run_id))
+            local_trace.start(run_id)
 
     def on_end(self, span):
-        pass
+        from api.services.observability import local_trace
+
+        try:
+            local_trace.capture(span)
+        except Exception:
+            logger.warning("Local trace span capture failed")
 
     def shutdown(self):
         pass
