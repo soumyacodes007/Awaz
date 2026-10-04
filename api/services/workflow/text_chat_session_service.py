@@ -417,6 +417,12 @@ async def execute_pending_text_chat_turn(
     )
     feedback_events = build_text_chat_realtime_feedback_events(completed_session_data)
     text_chat_logs = {"realtime_feedback_events": feedback_events}
+    trace_snapshot = getattr(execution, "local_trace", None)
+    if trace_snapshot is not None:
+        previous_trace = (text_session.workflow_run.logs or {}).get("local_trace") or {}
+        from api.services.observability.local_trace import merge
+
+        text_chat_logs["local_trace"] = merge(previous_trace, trace_snapshot)
 
     try:
         if execution.is_completed:
