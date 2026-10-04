@@ -5,6 +5,8 @@ from api.db.embed_token_client import EmbedTokenClient
 from api.db.folder_client import FolderClient
 from api.db.integration_client import IntegrationClient
 from api.db.knowledge_base_client import KnowledgeBaseClient
+from api.db.logs_client import LogsClient
+from api.db.metrics_client import MetricsClient
 from api.db.organization_client import OrganizationClient
 from api.db.organization_configuration_client import OrganizationConfigurationClient
 from api.db.organization_usage_client import OrganizationUsageClient
@@ -47,6 +49,8 @@ class DBClient(
     TelephonyPhoneNumberClient,
     TelephonyTrunkClient,
     FolderClient,
+    LogsClient,
+    MetricsClient,
 ):
     """
     Unified database client that combines all specialized database operations.
