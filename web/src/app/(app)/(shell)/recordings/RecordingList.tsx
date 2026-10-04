@@ -50,7 +50,7 @@ export function RecordingList({ items }: { items: Item[] }) {
               </p>
             </div>
             {r.outcome ? <Badge>{humanize(r.outcome)}</Badge> : null}
-            <Link href={`/runs/${r.workflowId}/${r.id}`} aria-label={`Open call ${r.id}`} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/70 hover:bg-accent hover:text-foreground">
+            <Link href={`/logs?call=${r.id}`} aria-label={`Open call ${r.id}`} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground/70 hover:bg-accent hover:text-foreground">
               <ChevronRight className="size-4" />
             </Link>
           </div>
