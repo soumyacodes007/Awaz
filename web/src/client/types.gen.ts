@@ -528,6 +528,55 @@ export type AgentSpec = {
 };
 
 /**
+ * AgentTestIn
+ */
+export type AgentTestIn = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Scenario
+     */
+    scenario: string;
+    /**
+     * Behaviors
+     */
+    behaviors: Array<TestBehaviorIn>;
+};
+
+/**
+ * AgentTestResponse
+ */
+export type AgentTestResponse = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Scenario
+     */
+    scenario: string;
+    /**
+     * Behaviors
+     */
+    behaviors: Array<TestBehavior>;
+    last_result?: TestLastResult | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
  * AgentVersion
  */
 export type AgentVersion = {
@@ -2337,6 +2386,22 @@ export type CreateServiceKeyResponse = {
 };
 
 /**
+ * CreateTestRunRequest
+ */
+export type CreateTestRunRequest = {
+    /**
+     * Test Ids
+     *
+     * Empty runs every test.
+     */
+    test_ids?: Array<number>;
+    /**
+     * Runs Per Test
+     */
+    runs_per_test?: 1 | 2 | 3 | 5;
+};
+
+/**
  * CreateTextChatSessionRequest
  */
 export type CreateTextChatSessionRequest = {
@@ -3706,6 +3771,16 @@ export type FolderResponse = {
      * Created At
      */
     created_at: string;
+};
+
+/**
+ * GenerateTestsRequest
+ */
+export type GenerateTestsRequest = {
+    /**
+     * Count
+     */
+    count?: number;
 };
 
 /**
@@ -7943,6 +8018,330 @@ export type TelnyxConfigurationRequest = {
      * Webhook public key from Mission Control Portal → Keys & Credentials → Public Key. Used to verify Telnyx webhook signatures.
      */
     webhook_public_key?: string | null;
+};
+
+/**
+ * TestBehavior
+ */
+export type TestBehavior = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description: string;
+};
+
+/**
+ * TestBehaviorIn
+ */
+export type TestBehaviorIn = {
+    /**
+     * Id
+     */
+    id?: string | null;
+    /**
+     * Name
+     */
+    name?: string;
+    /**
+     * Description
+     */
+    description?: string;
+};
+
+/**
+ * TestConfigResponse
+ */
+export type TestConfigResponse = {
+    /**
+     * Configured
+     */
+    configured: boolean;
+    /**
+     * Simulator Model
+     */
+    simulator_model: string;
+    /**
+     * Judge Model
+     */
+    judge_model: string;
+};
+
+/**
+ * TestLastResult
+ */
+export type TestLastResult = {
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Run Id
+     */
+    run_id: number;
+    /**
+     * Finished At
+     */
+    finished_at?: string | null;
+};
+
+/**
+ * TestResultResponse
+ */
+export type TestResultResponse = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Test Id
+     */
+    test_id?: number | null;
+    /**
+     * Iteration
+     */
+    iteration: number;
+    /**
+     * Test Name
+     */
+    test_name: string;
+    /**
+     * Scenario
+     */
+    scenario: string;
+    /**
+     * Behaviors
+     */
+    behaviors: Array<TestBehavior>;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Transcript
+     */
+    transcript: Array<TestTranscriptItem>;
+    /**
+     * Verdicts
+     */
+    verdicts: Array<TestVerdict>;
+    /**
+     * Workflow Run Id
+     */
+    workflow_run_id?: number | null;
+    /**
+     * Error
+     */
+    error?: string | null;
+    /**
+     * Started At
+     */
+    started_at?: string | null;
+    /**
+     * Finished At
+     */
+    finished_at?: string | null;
+};
+
+/**
+ * TestRunDetail
+ */
+export type TestRunDetail = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Number
+     */
+    number: number;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Runs Per Test
+     */
+    runs_per_test: number;
+    /**
+     * Version Number
+     */
+    version_number?: number | null;
+    /**
+     * Simulator Model
+     */
+    simulator_model?: string | null;
+    /**
+     * Judge Model
+     */
+    judge_model?: string | null;
+    /**
+     * Total
+     */
+    total: number;
+    /**
+     * Passed
+     */
+    passed: number;
+    /**
+     * Failed
+     */
+    failed: number;
+    /**
+     * Errored
+     */
+    errored: number;
+    /**
+     * Pending
+     */
+    pending: number;
+    /**
+     * Error
+     */
+    error?: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Started At
+     */
+    started_at?: string | null;
+    /**
+     * Finished At
+     */
+    finished_at?: string | null;
+    /**
+     * Results
+     */
+    results: Array<TestResultResponse>;
+};
+
+/**
+ * TestRunSummary
+ */
+export type TestRunSummary = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Number
+     */
+    number: number;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Runs Per Test
+     */
+    runs_per_test: number;
+    /**
+     * Version Number
+     */
+    version_number?: number | null;
+    /**
+     * Simulator Model
+     */
+    simulator_model?: string | null;
+    /**
+     * Judge Model
+     */
+    judge_model?: string | null;
+    /**
+     * Total
+     */
+    total: number;
+    /**
+     * Passed
+     */
+    passed: number;
+    /**
+     * Failed
+     */
+    failed: number;
+    /**
+     * Errored
+     */
+    errored: number;
+    /**
+     * Pending
+     */
+    pending: number;
+    /**
+     * Error
+     */
+    error?: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Started At
+     */
+    started_at?: string | null;
+    /**
+     * Finished At
+     */
+    finished_at?: string | null;
+};
+
+/**
+ * TestTranscriptItem
+ */
+export type TestTranscriptItem = {
+    /**
+     * Role
+     */
+    role: 'agent' | 'user' | 'tool' | 'end' | 'caller_end';
+    /**
+     * Text
+     */
+    text?: string | null;
+    /**
+     * Name
+     */
+    name?: string | null;
+    /**
+     * Arguments
+     */
+    arguments?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Result
+     */
+    result?: string | null;
+};
+
+/**
+ * TestVerdict
+ */
+export type TestVerdict = {
+    /**
+     * Behavior Id
+     */
+    behavior_id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Passed
+     */
+    passed: boolean;
+    /**
+     * Reasoning
+     */
+    reasoning: string;
 };
 
 /**
@@ -12396,6 +12795,461 @@ export type GetMetricsApiV1MetricsGetResponses = {
 };
 
 export type GetMetricsApiV1MetricsGetResponse = GetMetricsApiV1MetricsGetResponses[keyof GetMetricsApiV1MetricsGetResponses];
+
+export type GetTestConfigApiV1AgentTestsConfigGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/agent-tests/config';
+};
+
+export type GetTestConfigApiV1AgentTestsConfigGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTestConfigApiV1AgentTestsConfigGetError = GetTestConfigApiV1AgentTestsConfigGetErrors[keyof GetTestConfigApiV1AgentTestsConfigGetErrors];
+
+export type GetTestConfigApiV1AgentTestsConfigGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TestConfigResponse;
+};
+
+export type GetTestConfigApiV1AgentTestsConfigGetResponse = GetTestConfigApiV1AgentTestsConfigGetResponses[keyof GetTestConfigApiV1AgentTestsConfigGetResponses];
+
+export type ListTestsApiV1AgentsAgentIdTestsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/tests';
+};
+
+export type ListTestsApiV1AgentsAgentIdTestsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListTestsApiV1AgentsAgentIdTestsGetError = ListTestsApiV1AgentsAgentIdTestsGetErrors[keyof ListTestsApiV1AgentsAgentIdTestsGetErrors];
+
+export type ListTestsApiV1AgentsAgentIdTestsGetResponses = {
+    /**
+     * Response List Tests Api V1 Agents  Agent Id  Tests Get
+     *
+     * Successful Response
+     */
+    200: Array<AgentTestResponse>;
+};
+
+export type ListTestsApiV1AgentsAgentIdTestsGetResponse = ListTestsApiV1AgentsAgentIdTestsGetResponses[keyof ListTestsApiV1AgentsAgentIdTestsGetResponses];
+
+export type CreateTestApiV1AgentsAgentIdTestsPostData = {
+    body: AgentTestIn;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/tests';
+};
+
+export type CreateTestApiV1AgentsAgentIdTestsPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateTestApiV1AgentsAgentIdTestsPostError = CreateTestApiV1AgentsAgentIdTestsPostErrors[keyof CreateTestApiV1AgentsAgentIdTestsPostErrors];
+
+export type CreateTestApiV1AgentsAgentIdTestsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentTestResponse;
+};
+
+export type CreateTestApiV1AgentsAgentIdTestsPostResponse = CreateTestApiV1AgentsAgentIdTestsPostResponses[keyof CreateTestApiV1AgentsAgentIdTestsPostResponses];
+
+export type DeleteTestApiV1AgentsAgentIdTestsTestIdDeleteData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+        /**
+         * Test Id
+         */
+        test_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/tests/{test_id}';
+};
+
+export type DeleteTestApiV1AgentsAgentIdTestsTestIdDeleteErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteTestApiV1AgentsAgentIdTestsTestIdDeleteError = DeleteTestApiV1AgentsAgentIdTestsTestIdDeleteErrors[keyof DeleteTestApiV1AgentsAgentIdTestsTestIdDeleteErrors];
+
+export type DeleteTestApiV1AgentsAgentIdTestsTestIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type UpdateTestApiV1AgentsAgentIdTestsTestIdPutData = {
+    body: AgentTestIn;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+        /**
+         * Test Id
+         */
+        test_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/tests/{test_id}';
+};
+
+export type UpdateTestApiV1AgentsAgentIdTestsTestIdPutErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateTestApiV1AgentsAgentIdTestsTestIdPutError = UpdateTestApiV1AgentsAgentIdTestsTestIdPutErrors[keyof UpdateTestApiV1AgentsAgentIdTestsTestIdPutErrors];
+
+export type UpdateTestApiV1AgentsAgentIdTestsTestIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: AgentTestResponse;
+};
+
+export type UpdateTestApiV1AgentsAgentIdTestsTestIdPutResponse = UpdateTestApiV1AgentsAgentIdTestsTestIdPutResponses[keyof UpdateTestApiV1AgentsAgentIdTestsTestIdPutResponses];
+
+export type GenerateTestsApiV1AgentsAgentIdTestsGeneratePostData = {
+    body: GenerateTestsRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/tests/generate';
+};
+
+export type GenerateTestsApiV1AgentsAgentIdTestsGeneratePostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GenerateTestsApiV1AgentsAgentIdTestsGeneratePostError = GenerateTestsApiV1AgentsAgentIdTestsGeneratePostErrors[keyof GenerateTestsApiV1AgentsAgentIdTestsGeneratePostErrors];
+
+export type GenerateTestsApiV1AgentsAgentIdTestsGeneratePostResponses = {
+    /**
+     * Response Generate Tests Api V1 Agents  Agent Id  Tests Generate Post
+     *
+     * Successful Response
+     */
+    200: Array<AgentTestResponse>;
+};
+
+export type GenerateTestsApiV1AgentsAgentIdTestsGeneratePostResponse = GenerateTestsApiV1AgentsAgentIdTestsGeneratePostResponses[keyof GenerateTestsApiV1AgentsAgentIdTestsGeneratePostResponses];
+
+export type ListRunsApiV1AgentsAgentIdTestRunsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/test-runs';
+};
+
+export type ListRunsApiV1AgentsAgentIdTestRunsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListRunsApiV1AgentsAgentIdTestRunsGetError = ListRunsApiV1AgentsAgentIdTestRunsGetErrors[keyof ListRunsApiV1AgentsAgentIdTestRunsGetErrors];
+
+export type ListRunsApiV1AgentsAgentIdTestRunsGetResponses = {
+    /**
+     * Response List Runs Api V1 Agents  Agent Id  Test Runs Get
+     *
+     * Successful Response
+     */
+    200: Array<TestRunSummary>;
+};
+
+export type ListRunsApiV1AgentsAgentIdTestRunsGetResponse = ListRunsApiV1AgentsAgentIdTestRunsGetResponses[keyof ListRunsApiV1AgentsAgentIdTestRunsGetResponses];
+
+export type CreateRunApiV1AgentsAgentIdTestRunsPostData = {
+    body: CreateTestRunRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/test-runs';
+};
+
+export type CreateRunApiV1AgentsAgentIdTestRunsPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRunApiV1AgentsAgentIdTestRunsPostError = CreateRunApiV1AgentsAgentIdTestRunsPostErrors[keyof CreateRunApiV1AgentsAgentIdTestRunsPostErrors];
+
+export type CreateRunApiV1AgentsAgentIdTestRunsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: TestRunSummary;
+};
+
+export type CreateRunApiV1AgentsAgentIdTestRunsPostResponse = CreateRunApiV1AgentsAgentIdTestRunsPostResponses[keyof CreateRunApiV1AgentsAgentIdTestRunsPostResponses];
+
+export type GetRunApiV1AgentsAgentIdTestRunsRunIdGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/test-runs/{run_id}';
+};
+
+export type GetRunApiV1AgentsAgentIdTestRunsRunIdGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetRunApiV1AgentsAgentIdTestRunsRunIdGetError = GetRunApiV1AgentsAgentIdTestRunsRunIdGetErrors[keyof GetRunApiV1AgentsAgentIdTestRunsRunIdGetErrors];
+
+export type GetRunApiV1AgentsAgentIdTestRunsRunIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TestRunDetail;
+};
+
+export type GetRunApiV1AgentsAgentIdTestRunsRunIdGetResponse = GetRunApiV1AgentsAgentIdTestRunsRunIdGetResponses[keyof GetRunApiV1AgentsAgentIdTestRunsRunIdGetResponses];
+
+export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Agent Id
+         */
+        agent_id: number;
+        /**
+         * Run Id
+         */
+        run_id: number;
+    };
+    query?: never;
+    url: '/api/v1/agents/{agent_id}/test-runs/{run_id}/cancel';
+};
+
+export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostError = CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostErrors[keyof CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostErrors];
+
+export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: TestRunSummary;
+};
+
+export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponse = CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponses[keyof CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponses];
 
 export type ImpersonateApiV1SuperuserImpersonatePostData = {
     body: ImpersonateRequest;
