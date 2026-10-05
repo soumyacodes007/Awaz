@@ -1609,3 +1609,102 @@ class KnowledgeBaseChunkModel(Base):
             postgresql_ops={"embedding": "vector_cosine_ops"},
         ),
     )
+
+
+# ── Agent tests (Awaz) ──────────────────────────────────────────────────
+# A test is a user scenario plus expected behaviors. A run plays a simulated
+# caller against the agent's draft in text mode; an LLM judge grades each
+# behavior. Results snapshot the test so later edits don't rewrite history.
+
+
+class AgentTestModel(Base):
+    __tablename__ = "agent_tests"
+    id = Column(Integer, primary_key=True)
+    organization_id = Column(
+        Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    workflow_id = Column(
+        Integer, ForeignKey("workflows.id", ondelete="CASCADE"), nullable=False
+    )
+    name = Column(String(200), nullable=False)
+    scenario = Column(Text, nullable=False)
+    # [{id, name, description}]
+    behaviors = Column(JSON, nullable=False, default=list)
+    created_by = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    updated_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    __table_args__ = (
+        Index("ix_agent_tests_org_workflow", "organization_id", "workflow_id"),
+    )
+
+
+class AgentTestRunModel(Base):
+    __tablename__ = "agent_test_runs"
+    id = Column(Integer, primary_key=True)
+    organization_id = Column(
+        Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    workflow_id = Column(
+        Integer, ForeignKey("workflows.id", ondelete="CASCADE"), nullable=False
+    )
+    # Per-agent sequence shown as "Run #N".
+    number = Column(Integer, nullable=False)
+    # queued | running | completed | cancelled | failed
+    status = Column(String(16), nullable=False, default="queued")
+    runs_per_test = Column(Integer, nullable=False, default=1)
+    definition_id = Column(Integer, nullable=True)
+    version_number = Column(Integer, nullable=True)
+    simulator_model = Column(String(200), nullable=True)
+    judge_model = Column(String(200), nullable=True)
+    error = Column(Text, nullable=True)
+    created_by = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
+    )
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
+    # Bumped as results finish; a stale heartbeat marks an interrupted run.
+    heartbeat_at = Column(DateTime(timezone=True), nullable=True)
+    __table_args__ = (
+        UniqueConstraint("workflow_id", "number", name="uq_agent_test_runs_number"),
+        Index("ix_agent_test_runs_org_workflow", "organization_id", "workflow_id"),
+    )
+
+
+class AgentTestResultModel(Base):
+    __tablename__ = "agent_test_results"
+    id = Column(Integer, primary_key=True)
+    run_id = Column(
+        Integer, ForeignKey("agent_test_runs.id", ondelete="CASCADE"), nullable=False
+    )
+    test_id = Column(
+        Integer, ForeignKey("agent_tests.id", ondelete="SET NULL"), nullable=True
+    )
+    iteration = Column(Integer, nullable=False, default=1)
+    test_name = Column(String(200), nullable=False)
+    scenario = Column(Text, nullable=False)
+    behaviors = Column(JSON, nullable=False, default=list)
+    # queued | running | passed | failed | error | cancelled
+    status = Column(String(16), nullable=False, default="queued")
+    # [{role: agent|user|tool|end, text?, name?, arguments?, result?}]
+    transcript = Column(JSON, nullable=False, default=list)
+    # [{behavior_id, name, passed, reasoning}]
+    verdicts = Column(JSON, nullable=False, default=list)
+    workflow_run_id = Column(
+        Integer, ForeignKey("workflow_runs.id", ondelete="SET NULL"), nullable=True
+    )
+    error = Column(Text, nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
+    __table_args__ = (
+        Index("ix_agent_test_results_run", "run_id"),
+        Index("ix_agent_test_results_test", "test_id"),
+    )
