@@ -60,7 +60,7 @@ const NAV: Group[] = [
   {
     label: "Test",
     items: [
-      { href: "/evals", label: "Evals", icon: FlaskConical, badge: "Soon" },
+      { href: "/tests", label: "Tests", icon: FlaskConical },
       { href: "/simulations", label: "Simulations", icon: SquareTerminal, badge: "Soon" },
     ],
   },
