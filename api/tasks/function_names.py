@@ -6,3 +6,4 @@ class FunctionNames:
     PROCESS_KNOWLEDGE_BASE_DOCUMENT = "process_knowledge_base_document"
     DELIVER_WEBHOOK = "deliver_webhook"
     COMPLETE_INACTIVE_TEXT_CHAT_SESSION = "complete_inactive_text_chat_session"
+    RUN_AGENT_TEST_RUN = "run_agent_test_run"
