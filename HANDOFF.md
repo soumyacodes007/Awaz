@@ -241,6 +241,7 @@ Workspace row, Search (⌘K jump-to-page menu), then:
 | Recordings | Calls with audio, lazy signed-URL playback | usage runs, `/s3/signed-url` |
 | Metrics | Vapi layout: minutes/calls/spend/cost-per-call KPIs with trend lines; end reasons, cost breakdown and success donuts; duration by agent; unsuccessful calls; peak concurrency; measured latency. 24h/7d/30d/90d, grouped by hour/day/week | `/metrics`, per-agent runs |
 | Agent runs | Filterable table → call page with recording, per-turn latency trace, transcript, structured outputs, QA, call data | usage runs, run detail |
+| Tests | Sarvam-style agent tests: caller scenario + expected behaviors, AI-generated starter set, run one or all (1/2/3/5× each), live transcript with tool calls, per-behavior verdicts from an LLM judge, run history | `/agents/{id}/tests`, `/agents/{id}/test-runs`, `/agent-tests/config` |
 | API keys | Create (shown once), revoke/restore, quick start | `/user/api-keys` |
 | Integrations | Model providers (schema-driven), Credentials, Langfuse, BigQuery call events, MCP; CRM and WhatsApp marked "Soon" | model config v2, credentials, langfuse, preferences |
 | Billing & usage | Period usage, Dograh model credits + ledger + buy credits, daily breakdown | usage, billing credits |
@@ -302,7 +303,7 @@ views with real voice calls.
 2. **Delete `web/public/landing/*-preview.html`** (design previews)? Asked, not answered.
 3. In-browser **voice** test call (WebRTC; the old UI has a Pipecat client hook to port).
 4. Vapi's **Composer** and prompt **Generate** buttons need an LLM writing assistant; not built.
-5. **Evals and Simulations** (placeholders now) and own backend modules for
+5. **Simulations** (placeholder now; Tests are live, see below) and own backend modules for
    tracing, evals and CRM connectors (HubSpot, Zoho, Salesforce, LeadSquared, WhatsApp).
 6. **Squads** (multi-agent handoff) in v2 using `transfer_agent`.
 7. **Latency work**, the headline: start a `PROBLEMS.md` log, then replace Pipecat
@@ -336,3 +337,14 @@ views with real voice calls.
   vars that clash with ours and removes focus outlines). Two local patches are
   marked `// Awaz:`: the line chart no longer floors the y-axis at 1, and the bar
   chart keeps one decimal in its average.
+- **Agent tests** (`api/services/agent_tests/`, `api/routes/agent_tests.py`, tables
+  `agent_tests`, `agent_test_runs`, `agent_test_results`). One ARQ job per run
+  (`run_agent_test_run`, 1 h timeout) plays each conversation through the real
+  text-chat engine on the agent's **draft**, two at a time. The simulator and judge
+  use OpenRouter via `AWAZ_TEST_OPENROUTER_API_KEY` / `AWAZ_TEST_SIMULATOR_MODEL` /
+  `AWAZ_TEST_JUDGE_MODEL` in the root `.env`. Some open models write their reasoning
+  into the reply; the simulator sends `reasoning: {enabled: false}` and rejects
+  monologues over 600 chars. The call also ends once the agent and caller have both
+  said goodbye, since models otherwise trade farewells until the 10-turn cap.
+  Free OpenRouter models have small daily request limits; one conversation is
+  roughly 5–11 simulator calls plus one judge call.
