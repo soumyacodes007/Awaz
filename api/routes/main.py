@@ -6,6 +6,7 @@ from loguru import logger
 from pydantic import BaseModel
 
 from api.routes.agent_stream import router as agent_stream_router
+from api.routes.agent_tests import router as agent_tests_router
 from api.routes.agents import router as agents_router
 from api.routes.auth import router as auth_router
 from api.routes.campaign import router as campaign_router
@@ -45,6 +46,7 @@ router = APIRouter(
 router.include_router(telephony_router)
 router.include_router(logs_router)
 router.include_router(metrics_router)
+router.include_router(agent_tests_router)
 router.include_router(superuser_router)
 router.include_router(workflow_router)
 router.include_router(agents_router)
