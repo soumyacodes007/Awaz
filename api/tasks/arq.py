@@ -13,6 +13,7 @@ setup_logging()
 
 # Now import ARQ and task dependencies
 from arq import create_pool, cron
+from arq.worker import func
 from arq.connections import ArqRedis, RedisSettings
 from redis.asyncio.retry import Retry
 from redis.backoff import ExponentialBackoff
@@ -57,6 +58,7 @@ REDIS_SETTINGS = RedisSettings(
     ssl_check_hostname=False if use_ssl else None,
 )
 
+from api.tasks.agent_tests import run_agent_test_run
 from api.tasks.campaign_tasks import (
     process_campaign_batch,
     sync_campaign_source,
@@ -80,6 +82,8 @@ class WorkerSettings:
         process_knowledge_base_document,
         deliver_webhook,
         complete_inactive_text_chat_session,
+        # Whole conversations against LLMs; a run of many tests takes minutes.
+        func(run_agent_test_run, timeout=3600, max_tries=1),
     ]
     cron_jobs = [
         # Safety net for webhook deliveries whose ARQ job was lost (worker
