@@ -15,7 +15,7 @@ export const APP_PREFIXES = [
   "/phone-numbers",
   "/campaigns",
   "/resources",
-  "/evals",
+  "/tests",
   "/simulations",
   "/logs",
   "/recordings",
