@@ -37,6 +37,11 @@ services:
       PYTHONDONTWRITEBYTECODE: "1"
       OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
       SARVAM_API_KEY: "${SARVAM_API_KEY:-}"
+      # Agent tests: simulated caller and LLM judge (see api/services/agent_tests/llm.py).
+      AWAZ_TEST_OPENROUTER_API_KEY: "${AWAZ_TEST_OPENROUTER_API_KEY:-}"
+      AWAZ_TEST_SIMULATOR_MODEL: "${AWAZ_TEST_SIMULATOR_MODEL:-}"
+      AWAZ_TEST_JUDGE_MODEL: "${AWAZ_TEST_JUDGE_MODEL:-}"
+      AWAZ_TEST_CONCURRENCY: "${AWAZ_TEST_CONCURRENCY:-2}"
 
   ui:
     profiles: ["legacy-ui"]
