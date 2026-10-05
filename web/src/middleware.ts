@@ -41,7 +41,7 @@ export const config = {
     "/phone-numbers/:path*",
     "/campaigns/:path*",
     "/resources/:path*",
-    "/evals/:path*",
+    "/tests/:path*",
     "/simulations/:path*",
     "/logs/:path*",
     "/recordings/:path*",
