@@ -19,6 +19,7 @@ export type Qa = { enabled: boolean; system_prompt: string | null; min_call_dura
 
 export type Agent = {
   prompt: string;
+  core_facts: string;
   greeting: { type: "text" | "audio"; text: string | null; recording_id: string | null };
   allow_interrupt: boolean;
   tool_uuids: string[];
@@ -35,6 +36,7 @@ export type Agent = {
 export function toAgent(s: AgentSpec = {}): Agent {
   return {
     prompt: s.prompt ?? "",
+    core_facts: s.core_facts ?? "",
     greeting: { type: s.greeting?.type ?? "text", text: s.greeting?.text ?? null, recording_id: s.greeting?.recording_id ?? null },
     allow_interrupt: s.allow_interrupt ?? true,
     tool_uuids: s.tool_uuids ?? [],
