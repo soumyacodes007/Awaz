@@ -1,0 +1,62 @@
+{
+ "chunks": 890,
+ "questions": 15,
+ "rows": [
+  {
+   "pool": 20,
+   "rerank_chars": null,
+   "context_recall": 0.933,
+   "p50_ms": 365,
+   "p95_ms": 440
+  },
+  {
+   "pool": 12,
+   "rerank_chars": null,
+   "context_recall": 0.933,
+   "p50_ms": 241,
+   "p95_ms": 292
+  },
+  {
+   "pool": 20,
+   "rerank_chars": 512,
+   "context_recall": 0.933,
+   "p50_ms": 332,
+   "p95_ms": 404
+  },
+  {
+   "pool": 16,
+   "rerank_chars": 512,
+   "context_recall": 0.933,
+   "p50_ms": 289,
+   "p95_ms": 335
+  },
+  {
+   "pool": 12,
+   "rerank_chars": 512,
+   "context_recall": 0.933,
+   "p50_ms": 214,
+   "p95_ms": 264
+  },
+  {
+   "pool": 12,
+   "rerank_chars": 400,
+   "context_recall": 0.933,
+   "p50_ms": 211,
+   "p95_ms": 244
+  },
+  {
+   "pool": 10,
+   "rerank_chars": 400,
+   "context_recall": 0.933,
+   "p50_ms": 210,
+   "p95_ms": 274
+  },
+  {
+   "pool": 8,
+   "rerank_chars": 400,
+   "context_recall": 0.933,
+   "p50_ms": 175,
+   "p95_ms": 255
+  }
+ ]
+}
