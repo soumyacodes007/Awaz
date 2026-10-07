@@ -12,5 +12,12 @@ USER root
 COPY api/requirements.txt /tmp/awaz-requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir --no-deps -r /tmp/awaz-requirements.txt \
     && rm /tmp/awaz-requirements.txt \
-    && /opt/venv/bin/python -c "import google.genai, pipecat.utils.run_context"
+    && /opt/venv/bin/python -c "import google.genai, pipecat.utils.run_context, fastembed, pypdf, bs4"
+
+# Knowledge-base models run locally (embeddings and reranking take milliseconds
+# instead of an API round trip). Bake them into the image so the first call
+# never waits on a download.
+ENV FASTEMBED_CACHE_PATH=/opt/awaz-models
+RUN /opt/venv/bin/python -c "from fastembed import TextEmbedding; from fastembed.rerank.cross_encoder import TextCrossEncoder; TextEmbedding('BAAI/bge-small-en-v1.5'); TextCrossEncoder('Xenova/ms-marco-MiniLM-L-6-v2')" \
+    && chmod -R a+rX /opt/awaz-models
 USER dograh
