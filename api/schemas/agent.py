@@ -83,6 +83,10 @@ class AgentSpec(BaseModel):
     """Everything that defines how an agent behaves on a call."""
 
     prompt: str = ""
+    core_facts: str = Field(
+        default="",
+        description="Facts needed on most calls (hours, prices, key policies). Always in the prompt, after it.",
+    )
     greeting: Greeting = Field(default_factory=Greeting)
     allow_interrupt: bool = True
     tool_uuids: list[str] = Field(default_factory=list)
