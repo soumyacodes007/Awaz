@@ -23,6 +23,7 @@ from api.services.pipecat.agent_generation_processor import (
     AgentGenerationProcessor,
 )
 from api.services.pipecat.audio_config import AudioConfig
+from api.services.pipecat.knowledge_injector import KnowledgeInjector
 from api.services.pipecat.pipeline_builder import (
     build_agent_generation_pipeline,
     create_agent_worker,
@@ -261,11 +262,13 @@ class AgentRuntimeFactory:
             generation_started_callback=callbacks.generation_started,
             llm_text_frame_callback=callbacks.llm_text_frame,
         )
+        runtime.knowledge_injector = KnowledgeInjector(lambda: runtime.knowledge)
         pipeline = build_agent_generation_pipeline(
             runtime.llm,
             runtime.tts,
             generation_callbacks,
             recording_router=runtime.recording_router,
+            knowledge_injector=runtime.knowledge_injector,
         )
         call_tracing_context = getattr(self._call_worker, "_tracing_context", None)
         if call_tracing_context is None:
