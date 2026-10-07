@@ -42,6 +42,10 @@ services:
       AWAZ_TEST_SIMULATOR_MODEL: "${AWAZ_TEST_SIMULATOR_MODEL:-}"
       AWAZ_TEST_JUDGE_MODEL: "${AWAZ_TEST_JUDGE_MODEL:-}"
       AWAZ_TEST_CONCURRENCY: "${AWAZ_TEST_CONCURRENCY:-2}"
+      # "Connect with HubSpot" OAuth app (see integrations/hubspot-app/README.md).
+      HUBSPOT_CLIENT_ID: "${HUBSPOT_CLIENT_ID:-}"
+      HUBSPOT_CLIENT_SECRET: "${HUBSPOT_CLIENT_SECRET:-}"
+      HUBSPOT_REDIRECT_URI: "${HUBSPOT_REDIRECT_URI:-}"
 
   ui:
     profiles: ["legacy-ui"]
