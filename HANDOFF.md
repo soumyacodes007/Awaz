@@ -348,3 +348,24 @@ views with real voice calls.
   said goodbye, since models otherwise trade farewells until the 10-turn cap.
   Free OpenRouter models have small daily request limits; one conversation is
   roughly 5–11 simulator calls plus one judge call.
+- **HubSpot lead source for campaigns** (`api/services/crm/hubspot.py`,
+  `api/routes/crm.py`, `api/services/campaign/sources/hubspot.py`). The org
+  connection is stored in `organization_configurations` as `HUBSPOT_CONNECTION`,
+  using either a private-app token ("Add connection manually") or OAuth. OAuth
+  needs a HubSpot public app: set `HUBSPOT_CLIENT_ID`, `HUBSPOT_CLIENT_SECRET` and
+  `HUBSPOT_REDIRECT_URI` (`http://localhost:3000/api/v1/crm/hubspot/oauth/callback`);
+  the OAuth `state` is HMAC-signed and tied to the org. A campaign with
+  `source_type: "hubspot"` keeps its list, phone field, extra fields, country code
+  and cap as JSON in `source_id`, and reads contacts again at launch. Phones are
+  normalized to E.164 (default +91). Writing call outcomes back to HubSpot needs
+  `crm.objects.contacts.write`, which the current token doesn't have.
+- **Knowledge pipeline** (`api/services/knowledge/`,
+  `api/services/pipecat/knowledge_injector.py`, `api/routes/knowledge.py`).
+  Ingestion runs locally in the worker (pypdf / BeautifulSoup, chunks with a
+  document header, `bge-small` embeddings in `embedding_local`). Attached
+  documents up to 8k tokens are inlined in the system prompt; bigger sets are
+  searched before every turn (BM25 + dense with RRF, MiniLM rerank of 12, top 4)
+  and added to a copy of the turn. The old lookup tool is off unless
+  `AWAZ_KB_TOOL=1`. Agents also have a `core_facts` field that is always in the
+  prompt. Web pages can be added by link. Numbers and reasoning:
+  `KNOWLEDGE_AND_RAG.md`; benchmark and app checks: `evals/rag-latency/`.
