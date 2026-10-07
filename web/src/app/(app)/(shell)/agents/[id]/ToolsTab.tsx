@@ -2,7 +2,9 @@
 
 import { Check, FileText, Plus } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
+import { type KnowledgeSummary, summaryApiV1KnowledgeBaseSummaryGet } from "@/client";
 import { Badge, btn } from "@/components/app/ui";
 import { TOOL_KINDS } from "@/lib/tools";
 
@@ -52,6 +54,43 @@ function Pick({
         {on ? <Check className="size-3.5" strokeWidth={2.5} /> : null}
       </span>
     </button>
+  );
+}
+
+/** How the selected documents reach the agent: whole, in the prompt, or searched every turn. */
+function KnowledgeMode({ documentUuids }: { documentUuids: string[] }) {
+  const [summary, setSummary] = useState<KnowledgeSummary | null>(null);
+  const key = documentUuids.join(",");
+
+  useEffect(() => {
+    if (!key) return;
+    let live = true;
+    const t = setTimeout(async () => {
+      const res = await summaryApiV1KnowledgeBaseSummaryGet({ query: { document_uuids: key.split(",") } }).catch(() => null);
+      if (live) setSummary(res?.data ?? null);
+    }, 300);
+    return () => {
+      live = false;
+      clearTimeout(t);
+    };
+  }, [key]);
+
+  if (!key || !summary || summary.mode === "none") return null;
+  const tokens = `~${summary.tokens.toLocaleString()} tokens`;
+  return (
+    <p className="mb-3 rounded-md border bg-muted px-3.5 py-2.5 text-[13px] text-muted-foreground">
+      {summary.mode === "inline" ? (
+        <>
+          <span className="text-foreground">In the prompt.</span> {tokens}, under the {summary.inline_max_tokens.toLocaleString()}-token limit, so the agent
+          reads all of it on every turn. Fastest and most accurate.
+        </>
+      ) : (
+        <>
+          <span className="text-foreground">Searched every turn.</span> {tokens} across {summary.indexed_chunks} passages is too much for the prompt, so the
+          best four passages for each caller turn are added before the agent replies.
+        </>
+      )}
+    </p>
   );
 }
 
@@ -117,13 +156,14 @@ export function ToolsTab({
 
       <Section
         title="Knowledge base"
-        sub="Documents the agent can search to answer questions. Keep the prompt short and put facts here."
+        sub="Documents the agent answers from. Keep the prompt short and put reference material here."
         actions={
           <Link href="/resources/knowledge" className={btn("secondary", "sm")}>
             <Plus className="size-3.5" /> Add documents
           </Link>
         }
       >
+        <KnowledgeMode documentUuids={documentUuids} />
         {documents.length ? (
           <div className="grid gap-2 md:grid-cols-2">
             {documents.map((d) => (
