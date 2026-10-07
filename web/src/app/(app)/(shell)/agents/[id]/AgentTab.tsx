@@ -225,6 +225,21 @@ export function AgentTab({
       <PromptEditor value={agent.prompt} onChange={(v) => update({ prompt: v })} readOnly={readOnly} />
 
       <Section
+        title="Core facts"
+        sub="Short facts the agent must always get right: hours, phone numbers, address, prices. Always in the prompt, never searched."
+      >
+        <textarea
+          aria-label="Core facts"
+          value={agent.core_facts}
+          onChange={(e) => update({ core_facts: e.target.value })}
+          readOnly={readOnly}
+          rows={4}
+          placeholder={"Open 9 AM to 7 PM, Monday to Saturday.\nSupport line: +91 80 4000 1234."}
+          className={`${inputCls} min-h-24 py-2.5 leading-relaxed`}
+        />
+      </Section>
+
+      <Section
         title="First message"
         sub="What the agent says when the call connects. Leave it empty to let the agent open from the prompt."
         actions={
