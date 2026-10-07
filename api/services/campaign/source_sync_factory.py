@@ -1,5 +1,6 @@
 from api.services.campaign.source_sync import CampaignSourceSyncService
 from api.services.campaign.sources.csv import CSVSyncService
+from api.services.campaign.sources.hubspot import HubSpotSyncService
 
 
 def get_sync_service(source_type: str) -> CampaignSourceSyncService:
@@ -7,6 +8,7 @@ def get_sync_service(source_type: str) -> CampaignSourceSyncService:
 
     services = {
         "csv": CSVSyncService,
+        "hubspot": HubSpotSyncService,
     }
 
     service_class = services.get(source_type)
