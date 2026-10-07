@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "stt_final_ms": 150,
+  "commit_ms": 500,
+  "top_k": 4,
+  "embed_api": "openai/text-embedding-3-small",
+  "local_embed": "BAAI/bge-small-en-v1.5",
+  "local_rerank": "Xenova/ms-marco-MiniLM-L-6-v2",
+  "repeats": 1,
+  "errors": 4,
+  "run": "20261007-150528"
+ },
+ "summary": [
+  {
+   "kb": "large",
+   "model": "llama-3.1-8b-instruct",
+   "pipeline": "hybrid_local",
+   "n": 4,
+   "accuracy": 25,
+   "followup_accuracy": 0,
+   "retrieval_hit": 25,
+   "retrieval_p50_ms": 17,
+   "answer_p50_ms": 338,
+   "first_audio_p50_ms": 338,
+   "perceived_p50_ms": 838,
+   "perceived_p90_ms": 890,
+   "perceived_early_p50_ms": 504,
+   "prompt_tokens_avg": 405,
+   "cached_share": 0,
+   "cost_per_1k_turns_usd": 0.021
+  }
+ ]
+}
