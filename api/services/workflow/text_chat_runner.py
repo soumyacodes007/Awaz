@@ -41,6 +41,7 @@ from api.schemas.workflow_configurations import WorkflowConfigurationDefaults
 from api.services.configuration.registry import ServiceProviders
 from api.services.observability import local_trace
 from api.services.pipecat.audio_config import create_audio_config
+from api.services.pipecat.knowledge_injector import KnowledgeInjector
 from api.services.pipecat.pipeline_builder import create_pipeline_task
 from api.services.pipecat.pipeline_metrics_aggregator import (
     PipelineMetricsAggregator,
@@ -713,8 +714,19 @@ async def execute_text_chat_pending_turn(
     trace_span_attributes = {
         "langfuse.trace.name": workflow_run.name or f"text-chat-{workflow_run_id}"
     }
+    # Awaz: per-turn knowledge retrieval for agents whose knowledge base
+    # is too big to inline (same processor as voice calls). Turns are queued
+    # on it, not on the LLM, so retrieval runs before generation.
+    knowledge_injector = KnowledgeInjector(
+        lambda: (
+            getattr(engine.active_agent, "knowledge", None)
+            if engine.active_agent
+            else None
+        )
+    )
     pipeline = Pipeline(
         [
+            knowledge_injector,
             llm,
             capture_processor,
             assistant_context_aggregator,
@@ -784,7 +796,7 @@ async def execute_text_chat_pending_turn(
             generation_marker = capture_processor.activity_count
             response_window.note_direct_context_request()
             engine.expect_response()
-            await llm.queue_frame(LLMContextFrame(context))
+            await knowledge_injector.queue_frame(LLMContextFrame(context))
             await _wait_for_quiescence(
                 capture_processor=capture_processor,
                 response_window=response_window,
