@@ -1,0 +1,165 @@
+{
+ "small": {
+  "summary": {
+   "mode": "inline",
+   "tokens": 632,
+   "inline_max_tokens": 8000,
+   "documents": [
+    "cbam-embedded-emissions-guidance.pdf",
+    "cbam-verification-guidance.pdf",
+    "commercial-invoice.pdf",
+    "energy-and-production-report.pdf",
+    "supplier-emissions-declaration.pdf",
+    "transport-declaration.pdf",
+    "verification-statement.pdf"
+   ],
+   "indexed_chunks": 0
+  },
+  "turns": [
+   {
+    "q": "What's the net weight on invoice CT-INV-2025-0143?",
+    "reply": "The net weight on invoice CT-INV-2025-0143 is 10,000 kg.",
+    "turn_ms": 1198,
+    "ok": true
+   },
+   {
+    "q": "What covered quantity does declaration SED-2025-0091 report?",
+    "reply": "The covered quantity reported by declaration SED-2025-0091 is 8,500 kg.",
+    "turn_ms": 1163,
+    "ok": true
+   },
+   {
+    "q": "What's the sea distance for shipment TD-2025-0143?",
+    "reply": "The sea distance for shipment TD-2025-0143 is 11,800 km.",
+    "turn_ms": 1448,
+    "ok": true
+   },
+   {
+    "q": "What is your support phone number?",
+    "reply": "Our support phone number is +91 80 4000 1234.",
+    "turn_ms": 1132,
+    "ok": true
+   }
+  ]
+ },
+ "large": {
+  "summary": {
+   "mode": "retrieval",
+   "tokens": 17640,
+   "inline_max_tokens": 8000,
+   "documents": [
+    "cbam-embedded-emissions-guidance.pdf",
+    "cbam-verification-guidance.pdf",
+    "commercial-invoice.pdf",
+    "energy-and-production-report.pdf",
+    "supplier-emissions-declaration.pdf",
+    "transport-declaration.pdf",
+    "verification-statement.pdf",
+    "supplier-pack-514.txt",
+    "supplier-pack-388.txt",
+    "supplier-pack-461.txt",
+    "supplier-pack-436.txt",
+    "supplier-pack-591.txt",
+    "supplier-pack-327.txt",
+    "supplier-pack-434.txt",
+    "supplier-pack-375.txt",
+    "supplier-pack-730.txt",
+    "supplier-pack-573.txt",
+    "supplier-pack-312.txt",
+    "supplier-pack-654.txt",
+    "supplier-pack-612.txt",
+    "supplier-pack-494.txt",
+    "supplier-pack-475.txt",
+    "supplier-pack-490.txt",
+    "supplier-pack-655.txt",
+    "supplier-pack-485.txt",
+    "supplier-pack-414.txt",
+    "supplier-pack-618.txt",
+    "supplier-pack-440.txt",
+    "supplier-pack-581.txt",
+    "supplier-pack-717.txt",
+    "supplier-pack-411.txt",
+    "supplier-pack-558.txt",
+    "supplier-pack-429.txt",
+    "supplier-pack-588.txt",
+    "supplier-pack-441.txt",
+    "supplier-pack-680.txt",
+    "supplier-pack-766.txt",
+    "supplier-pack-728.txt",
+    "supplier-pack-668.txt",
+    "supplier-pack-428.txt",
+    "supplier-pack-649.txt",
+    "supplier-pack-331.txt",
+    "supplier-pack-731.txt",
+    "supplier-pack-705.txt",
+    "supplier-pack-729.txt",
+    "supplier-pack-496.txt",
+    "supplier-pack-376.txt"
+   ],
+   "indexed_chunks": 90
+  },
+  "turns": [
+   {
+    "q": "What's the net weight on invoice CT-INV-2025-0143?",
+    "reply": "The net weight on invoice CT-INV-2025-0143 is 10,000 kg.",
+    "turn_ms": 1763,
+    "ok": true
+   },
+   {
+    "q": "What covered quantity does declaration SED-2025-0091 report?",
+    "reply": "I don't know the covered quantity reported on declaration SED-2025-0091.",
+    "turn_ms": 1822,
+    "ok": false
+   },
+   {
+    "q": "What's the sea distance for shipment TD-2025-0143?",
+    "reply": "The sea distance for shipment TD-2025-0143 is 11,800 km.",
+    "turn_ms": 1868,
+    "ok": true
+   },
+   {
+    "q": "How much electricity did Odisha Steel Works Unit 4 consume?",
+    "reply": "The electricity consumption for Odisha Steel Works Unit 4 is 18,400 kWh.",
+    "turn_ms": 2559,
+    "ok": true
+   },
+   {
+    "q": "What's the net weight on invoice CT-INV-2025-0143?",
+    "reply": "The net weight on invoice CT-INV-2025-0143 is 10,000 kg.",
+    "turn_ms": 1926,
+    "ok": null
+   },
+   {
+    "q": "And what's the gross weight?",
+    "reply": "The gross weight on invoice CT-INV-2025-0143 is 10,420 kg.",
+    "turn_ms": 1429,
+    "ok": true
+   }
+  ]
+ },
+ "link": {
+  "summary": {
+   "mode": "inline",
+   "tokens": 1691,
+   "inline_max_tokens": 8000,
+   "documents": [
+    "Carbon tariff - Wikipedia (en.wikipedia.org)"
+   ],
+   "indexed_chunks": 0
+  },
+  "document": {
+   "filename": "Carbon tariff - Wikipedia (en.wikipedia.org)",
+   "processing_status": "completed",
+   "total_chunks": 8,
+   "source_url": "https://en.wikipedia.org/wiki/Carbon_Border_Adjustment_Mechanism"
+  },
+  "turns": [
+   {
+    "q": "What does CBAM stand for?",
+    "reply": "CBAM stands for Carbon Border Adjustment Mechanism.",
+    "turn_ms": 1501,
+    "ok": true
+   }
+  ]
+ }
+}
