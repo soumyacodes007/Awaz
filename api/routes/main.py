@@ -11,7 +11,9 @@ from api.routes.agents import router as agents_router
 from api.routes.auth import router as auth_router
 from api.routes.campaign import router as campaign_router
 from api.routes.credentials import router as credentials_router
+from api.routes.crm import router as crm_router
 from api.routes.folder import router as folder_router
+from api.routes.knowledge import router as knowledge_router
 from api.routes.knowledge_base import router as knowledge_base_router
 from api.routes.logs import router as logs_router
 from api.routes.metrics import router as metrics_router
@@ -47,6 +49,8 @@ router.include_router(telephony_router)
 router.include_router(logs_router)
 router.include_router(metrics_router)
 router.include_router(agent_tests_router)
+router.include_router(crm_router)
+router.include_router(knowledge_router)
 router.include_router(superuser_router)
 router.include_router(workflow_router)
 router.include_router(agents_router)
