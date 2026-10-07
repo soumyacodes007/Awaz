@@ -1,0 +1,20 @@
+[
+  {"id": "q01", "q": "What's the net weight on invoice CT-INV-2025-0143?", "expect": [["10[,. ]?000"]], "gold": ["commercial-invoice"]},
+  {"id": "q02", "q": "Which vessel is listed on invoice CT-INV-2025-0143?", "expect": [["coral horizon"]], "gold": ["commercial-invoice"]},
+  {"id": "q03", "q": "Who is the buyer on invoice CT-INV-2025-0143?", "expect": [["carbontrace"]], "gold": ["commercial-invoice"]},
+  {"id": "q04", "q": "What covered quantity does declaration SED-2025-0091 report?", "expect": [["8[,. ]?500"]], "gold": ["supplier-emissions-declaration"]},
+  {"id": "q05", "q": "What production route does declaration SED-2025-0091 use?", "expect": [["electric arc"]], "gold": ["supplier-emissions-declaration"]},
+  {"id": "q06", "q": "What's the direct emissions intensity in declaration SED-2025-0091?", "expect": [["1\\.42"]], "gold": ["supplier-emissions-declaration"]},
+  {"id": "q07", "q": "How much electricity did Odisha Steel Works Unit 4 consume?", "expect": [["18[,. ]?400"]], "gold": ["energy-and-production-report"]},
+  {"id": "q08", "q": "How much natural gas did Odisha Steel Works Unit 4 use?", "expect": [["640"]], "gold": ["energy-and-production-report"]},
+  {"id": "q09", "q": "What's the sea distance for shipment TD-2025-0143?", "expect": [["11[,. ]?800"]], "gold": ["transport-declaration"]},
+  {"id": "q10", "q": "What coverage period does verification statement VS-2025-0447 have?", "expect": [["feb"]], "gold": ["verification-statement"]},
+  {"id": "q11", "q": "Does verification VS-2025-0447 cover the whole reporting period of declaration SED-2025-0091?", "expect": [["\\bno\\b", "\\bnot\\b", "doesn'?t", "only", "partial"], ["jan"]], "gold": ["verification-statement", "supplier-emissions-declaration"]},
+  {"id": "q12", "q": "According to the CBAM verification guidance, what must the coverage period match?", "expect": [["(full|entire|whole|complete) reporting period"]], "gold": ["cbam-verification-guidance"]},
+  {"id": "f01", "q": "And what's the gross weight?", "expect": [["10[,. ]?420"]], "gold": ["commercial-invoice"],
+   "history": [{"role": "user", "content": "What's the net weight on invoice CT-INV-2025-0143?"}, {"role": "assistant", "content": "The net weight on invoice CT-INV-2025-0143 is 10,000 kg."}]},
+  {"id": "f02", "q": "And the total direct emissions for it?", "expect": [["12\\.07"]], "gold": ["supplier-emissions-declaration"],
+   "history": [{"role": "user", "content": "What covered quantity does declaration SED-2025-0091 report?"}, {"role": "assistant", "content": "Declaration SED-2025-0091 covers 8,500 kg."}]},
+  {"id": "f03", "q": "And how far by road?", "expect": [["420"]], "gold": ["transport-declaration"],
+   "history": [{"role": "user", "content": "What's the sea distance for shipment TD-2025-0143?"}, {"role": "assistant", "content": "Shipment TD-2025-0143 travels 11,800 km by sea."}]}
+]
