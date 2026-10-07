@@ -1,0 +1,69 @@
+{
+ "meta": {
+  "stt_final_ms": 150,
+  "commit_ms": 500,
+  "top_k": 4,
+  "embed_api": "openai/text-embedding-3-small",
+  "local_embed": "BAAI/bge-small-en-v1.5",
+  "local_rerank": "Xenova/ms-marco-MiniLM-L-6-v2",
+  "repeats": 1,
+  "errors": 0,
+  "run": "20261007-150702"
+ },
+ "summary": [
+  {
+   "kb": "large",
+   "model": "llama-3.1-8b-instruct",
+   "pipeline": "hybrid_local",
+   "n": 6,
+   "accuracy": 67,
+   "followup_accuracy": 50,
+   "retrieval_hit": 83,
+   "retrieval_p50_ms": 17,
+   "answer_p50_ms": 459,
+   "first_audio_p50_ms": 459,
+   "perceived_p50_ms": 959,
+   "perceived_p90_ms": 1012,
+   "perceived_early_p50_ms": 609,
+   "prompt_tokens_avg": 523,
+   "cached_share": 0,
+   "cost_per_1k_turns_usd": 0.028
+  },
+  {
+   "kb": "large",
+   "model": "llama-3.1-8b-instruct",
+   "pipeline": "hybrid_plain",
+   "n": 6,
+   "accuracy": 33,
+   "followup_accuracy": 0,
+   "retrieval_hit": 33,
+   "retrieval_p50_ms": 20,
+   "answer_p50_ms": 458,
+   "first_audio_p50_ms": 458,
+   "perceived_p50_ms": 958,
+   "perceived_p90_ms": 1243,
+   "perceived_early_p50_ms": 608,
+   "prompt_tokens_avg": 519,
+   "cached_share": 0,
+   "cost_per_1k_turns_usd": 0.028
+  },
+  {
+   "kb": "large",
+   "model": "llama-3.1-8b-instruct",
+   "pipeline": "hybrid_rerank",
+   "n": 6,
+   "accuracy": 100,
+   "followup_accuracy": 100,
+   "retrieval_hit": 100,
+   "retrieval_p50_ms": 303,
+   "answer_p50_ms": 807,
+   "first_audio_p50_ms": 807,
+   "perceived_p50_ms": 1307,
+   "perceived_p90_ms": 1401,
+   "perceived_early_p50_ms": 957,
+   "prompt_tokens_avg": 512,
+   "cached_share": 0,
+   "cost_per_1k_turns_usd": 0.027
+  }
+ ]
+}
