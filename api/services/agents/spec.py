@@ -102,6 +102,7 @@ def read_agent(definition: Any) -> AgentSpec:
 
     return AgentSpec(
         prompt=s.get("prompt") or "",
+        core_facts=s.get("core_facts") or "",
         greeting=Greeting(
             type="audio" if s.get("greeting_type") == "audio" else "text",
             text=_str(s.get("greeting")),
@@ -167,6 +168,7 @@ def _start_data(agent: AgentSpec, previous: dict) -> dict:
         {
             "name": previous.get("name") or "Agent",
             "prompt": agent.prompt,
+            "core_facts": agent.core_facts or None,
             "greeting_type": agent.greeting.type,
             "greeting": agent.greeting.text if text else None,
             "greeting_recording_id": None if text else agent.greeting.recording_id,
