@@ -1574,6 +1574,9 @@ class KnowledgeBaseChunkModel(Base):
     # Default: 1536 dimensions for OpenAI text-embedding-3-small
     # SentenceTransformer (384-dim) also supported but stored as 384-dim vectors
     embedding = Column(Vector(1536), nullable=True)
+    # Awaz: local embedding (BAAI/bge-small-en-v1.5, 384 dims) used by the
+    # in-pipeline hybrid retriever. The 1536-dim column is Dograh's API embedding.
+    embedding_local = Column(Vector(384), nullable=True)
 
     # Token count (useful for chunking strategy analysis)
     token_count = Column(Integer, nullable=True)
