@@ -123,6 +123,7 @@ class Node:
         # Type-specific fields — read with getattr so this works for every
         # node variant in the discriminated union.
         self.prompt = getattr(data, "prompt", None)
+        self.core_facts = getattr(data, "core_facts", None)
         self.allow_interrupt = getattr(data, "allow_interrupt", False)
         self.extraction_enabled = getattr(data, "extraction_enabled", False)
         self.extraction_prompt = getattr(data, "extraction_prompt", None)
