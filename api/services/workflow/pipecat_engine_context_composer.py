@@ -59,6 +59,7 @@ def compose_system_prompt_for_node(
     workflow: "WorkflowGraph",
     format_prompt: Callable[[str], str],
     has_recordings: bool,
+    knowledge_section: str = "",
 ) -> ComposedNodePrompt:
     """Compose the full system prompt text for a workflow node.
 
@@ -81,7 +82,17 @@ def compose_system_prompt_for_node(
 
     formatted_node_prompt = format_prompt(node.prompt)
 
-    parts = [p for p in (global_prompt, formatted_node_prompt) if p]
+    # Awaz knowledge hierarchy: the prompt, then core facts, then the knowledge
+    # base when it's small enough to inline. All of it is identical on every
+    # call, so it stays one cacheable prefix.
+    core_facts = (getattr(node, "core_facts", None) or "").strip()
+    core_section = f"## Core facts\n{format_prompt(core_facts)}" if core_facts else ""
+
+    parts = [
+        p
+        for p in (global_prompt, formatted_node_prompt, core_section, knowledge_section)
+        if p
+    ]
 
     recording_enabled = has_recordings and "RECORDING_ID:" in formatted_node_prompt
     if recording_enabled:
@@ -96,6 +107,7 @@ async def compose_functions_for_node(
     *,
     node: "Node",
     custom_tool_manager: Optional["CustomToolManager"],
+    knowledge_tool: bool = True,
 ) -> list[dict]:
     """Compose the function/tool schemas for a workflow node.
 
@@ -112,8 +124,9 @@ async def compose_functions_for_node(
     """
     functions: list[dict] = []
 
-    # Knowledge base retrieval tool
-    if node.document_uuids:
+    # Knowledge base lookup tool: only a fallback when the knowledge base is
+    # searched every turn; an inlined knowledge base needs no tool.
+    if node.document_uuids and knowledge_tool:
         kb_tool_def = get_knowledge_base_tool(node.document_uuids)
         kb_schema = get_function_schema(
             kb_tool_def["function"]["name"],
