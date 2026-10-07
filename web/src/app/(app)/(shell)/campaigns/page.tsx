@@ -72,7 +72,7 @@ export default async function CampaignsPage() {
             <EmptyState
               icon={Megaphone}
               title="No campaigns yet"
-              body="Upload a CSV of phone numbers and pick an agent. Every column becomes a variable the agent can use, like {{first_name}}."
+              body="Pull leads from a CSV or a HubSpot list and pick an agent. Every field becomes a variable the agent can use, like {{first_name}}."
               action={
                 <Link href="/campaigns/new" className={btn("primary")}>
                   <Plus className="size-4" /> New campaign
