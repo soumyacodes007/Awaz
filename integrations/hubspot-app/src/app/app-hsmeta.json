@@ -1,0 +1,28 @@
+{
+  "uid": "awaz_oauth_app",
+  "type": "app",
+  "config": {
+    "name": "Awaz",
+    "description": "Call your HubSpot contacts with Awaz voice AI agents. Awaz reads contact lists to build outbound calling campaigns.",
+    "distribution": "marketplace",
+    "isUserLevel": false,
+    "auth": {
+      "type": "oauth",
+      "redirectUrls": [
+        "http://localhost:3000/api/v1/crm/hubspot/oauth/callback"
+      ],
+      "requiredScopes": [
+        "oauth",
+        "crm.objects.contacts.read",
+        "crm.lists.read"
+      ],
+      "optionalScopes": [],
+      "conditionallyRequiredScopes": []
+    },
+    "permittedUrls": {
+      "fetch": [],
+      "iframe": [],
+      "img": []
+    }
+  }
+}
