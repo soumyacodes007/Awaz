@@ -101,6 +101,7 @@ def build_agent_generation_pipeline(
     tts,
     generation_callback_processor,
     recording_router=None,
+    knowledge_injector=None,
 ):
     """Build the generation stage that runs in one agent visit's own worker.
 
@@ -108,7 +109,12 @@ def build_agent_generation_pipeline(
     aggregator and the output transport, so the frames arriving at the call
     pipeline's transport are the same as if this ran inline.
     """
-    processors = [llm, generation_callback_processor]
+    # Awaz: per-turn knowledge retrieval runs right before the LLM.
+    processors = [
+        p
+        for p in (knowledge_injector, llm, generation_callback_processor)
+        if p is not None
+    ]
     if recording_router:
         processors.append(recording_router)
     processors.append(tts)
