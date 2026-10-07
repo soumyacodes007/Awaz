@@ -345,6 +345,16 @@ export type ActiveCallsResponse = {
 };
 
 /**
+ * AddLinkRequest
+ */
+export type AddLinkRequest = {
+    /**
+     * Url
+     */
+    url: string;
+};
+
+/**
  * AgentListItem
  */
 export type AgentListItem = {
@@ -496,6 +506,12 @@ export type AgentSpec = {
      * Prompt
      */
     prompt?: string;
+    /**
+     * Core Facts
+     *
+     * Facts needed on most calls (hours, prices, key policies). Always in the prompt, after it.
+     */
+    core_facts?: string;
     greeting?: Greeting;
     /**
      * Allow Interrupt
@@ -2088,6 +2104,16 @@ export type CloudonixConfigurationRequest = {
      * Cloudonix Voice Application name. The application's url is updated when inbound workflows are attached to numbers on this domain. If omitted, an application is auto-created on save and its name is stored on the configuration.
      */
     application_name?: string | null;
+};
+
+/**
+ * ConnectTokenRequest
+ */
+export type ConnectTokenRequest = {
+    /**
+     * Access Token
+     */
+    access_token: string;
 };
 
 /**
@@ -4396,6 +4422,132 @@ export type HttpTransferResolverConfig = {
 };
 
 /**
+ * HubSpotList
+ */
+export type HubSpotList = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Size
+     */
+    size?: number | null;
+    /**
+     * Dynamic
+     */
+    dynamic: boolean;
+};
+
+/**
+ * HubSpotProperty
+ */
+export type HubSpotProperty = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Type
+     */
+    type?: string | null;
+    /**
+     * Field Type
+     */
+    field_type?: string | null;
+    /**
+     * Group
+     */
+    group?: string | null;
+    /**
+     * Phone
+     */
+    phone: boolean;
+};
+
+/**
+ * HubSpotSourceConfig
+ */
+export type HubSpotSourceConfig = {
+    /**
+     * List Id
+     *
+     * None means every contact.
+     */
+    list_id?: string | null;
+    /**
+     * List Name
+     */
+    list_name?: string | null;
+    /**
+     * Phone Property
+     */
+    phone_property?: string;
+    /**
+     * Fallback Phone Properties
+     */
+    fallback_phone_properties?: Array<string>;
+    /**
+     * Properties
+     */
+    properties?: Array<string>;
+    /**
+     * Default Country Code
+     */
+    default_country_code?: string;
+    /**
+     * Max Contacts
+     */
+    max_contacts?: number;
+};
+
+/**
+ * HubSpotStatus
+ */
+export type HubSpotStatus = {
+    /**
+     * Connected
+     */
+    connected: boolean;
+    /**
+     * Auth Type
+     */
+    auth_type?: string | null;
+    /**
+     * Portal Id
+     */
+    portal_id?: number | null;
+    /**
+     * Ui Domain
+     */
+    ui_domain?: string | null;
+    /**
+     * Time Zone
+     */
+    time_zone?: string | null;
+    /**
+     * Connected At
+     */
+    connected_at?: string | null;
+    /**
+     * Token Hint
+     */
+    token_hint?: string | null;
+    /**
+     * Oauth Available
+     */
+    oauth_available: boolean;
+};
+
+/**
  * Hugging Face
  *
  * Hosted Hugging Face Inference Providers API for usage-based inference.
@@ -4630,6 +4782,34 @@ export type InworldTtsConfiguration = {
 export type ItemKind = 'node' | 'edge' | 'workflow';
 
 /**
+ * KnowledgeSummary
+ */
+export type KnowledgeSummary = {
+    /**
+     * Mode
+     *
+     * none, inline (whole text in the prompt) or retrieval (searched every turn)
+     */
+    mode: string;
+    /**
+     * Tokens
+     */
+    tokens: number;
+    /**
+     * Inline Max Tokens
+     */
+    inline_max_tokens: number;
+    /**
+     * Documents
+     */
+    documents: Array<string>;
+    /**
+     * Indexed Chunks
+     */
+    indexed_chunks: number;
+};
+
+/**
  * LangfuseCredentialsRequest
  */
 export type LangfuseCredentialsRequest = {
@@ -4730,6 +4910,46 @@ export type LatencyResponse = {
      * Truncated
      */
     truncated?: boolean;
+};
+
+/**
+ * LeadPreview
+ */
+export type LeadPreview = {
+    /**
+     * Scanned
+     */
+    scanned: number;
+    /**
+     * Capped
+     *
+     * True when only the first contacts were scanned.
+     */
+    capped: boolean;
+    /**
+     * Dialable
+     */
+    dialable: number;
+    /**
+     * No Phone
+     */
+    no_phone: number;
+    /**
+     * Bad Phone
+     */
+    bad_phone: number;
+    /**
+     * Bad Phone Samples
+     */
+    bad_phone_samples: Array<string>;
+    /**
+     * Variables
+     */
+    variables: Array<string>;
+    /**
+     * Sample
+     */
+    sample: Array<PreviewContact>;
 };
 
 /**
@@ -5464,6 +5684,16 @@ export type NumberInputOptions = {
 };
 
 /**
+ * OAuthStart
+ */
+export type OAuthStart = {
+    /**
+     * Authorize Url
+     */
+    authorize_url: string;
+};
+
+/**
  * OnboardingState
  *
  * Per-user onboarding state, stored under UserConfigurationKey.ONBOARDING.
@@ -6166,6 +6396,26 @@ export type PresignedUploadUrlResponse = {
      * Expires In
      */
     expires_in: number;
+};
+
+/**
+ * PreviewContact
+ */
+export type PreviewContact = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Phone Number
+     */
+    phone_number: string;
+    /**
+     * Variables
+     */
+    variables: {
+        [key: string]: string;
+    };
 };
 
 /**
@@ -9093,6 +9343,64 @@ export type TrunkUpdateRequest = {
     settings?: {
         [key: string]: unknown;
     } | null;
+};
+
+/**
+ * TryHit
+ */
+export type TryHit = {
+    /**
+     * Document
+     */
+    document: string;
+    /**
+     * Text
+     */
+    text: string;
+    /**
+     * Score
+     */
+    score: number;
+};
+
+/**
+ * TryRequest
+ */
+export type TryRequest = {
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Document Uuids
+     *
+     * Defaults to every ready document
+     */
+    document_uuids?: Array<string> | null;
+};
+
+/**
+ * TryResponse
+ */
+export type TryResponse = {
+    /**
+     * Hits
+     */
+    hits: Array<TryHit>;
+    /**
+     * Ms
+     */
+    ms: number;
+    /**
+     * Reranked
+     */
+    reranked: boolean;
+    /**
+     * Skipped
+     *
+     * Nothing relevant enough to add to the turn
+     */
+    skipped: boolean;
 };
 
 /**
@@ -13250,6 +13558,459 @@ export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponses = {
 };
 
 export type CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponse = CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponses[keyof CancelRunApiV1AgentsAgentIdTestRunsRunIdCancelPostResponses];
+
+export type DisconnectApiV1CrmHubspotDeleteData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/crm/hubspot';
+};
+
+export type DisconnectApiV1CrmHubspotDeleteErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DisconnectApiV1CrmHubspotDeleteError = DisconnectApiV1CrmHubspotDeleteErrors[keyof DisconnectApiV1CrmHubspotDeleteErrors];
+
+export type DisconnectApiV1CrmHubspotDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: HubSpotStatus;
+};
+
+export type DisconnectApiV1CrmHubspotDeleteResponse = DisconnectApiV1CrmHubspotDeleteResponses[keyof DisconnectApiV1CrmHubspotDeleteResponses];
+
+export type StatusApiV1CrmHubspotGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/crm/hubspot';
+};
+
+export type StatusApiV1CrmHubspotGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StatusApiV1CrmHubspotGetError = StatusApiV1CrmHubspotGetErrors[keyof StatusApiV1CrmHubspotGetErrors];
+
+export type StatusApiV1CrmHubspotGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: HubSpotStatus;
+};
+
+export type StatusApiV1CrmHubspotGetResponse = StatusApiV1CrmHubspotGetResponses[keyof StatusApiV1CrmHubspotGetResponses];
+
+export type ConnectTokenApiV1CrmHubspotTokenPostData = {
+    body: ConnectTokenRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/crm/hubspot/token';
+};
+
+export type ConnectTokenApiV1CrmHubspotTokenPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConnectTokenApiV1CrmHubspotTokenPostError = ConnectTokenApiV1CrmHubspotTokenPostErrors[keyof ConnectTokenApiV1CrmHubspotTokenPostErrors];
+
+export type ConnectTokenApiV1CrmHubspotTokenPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: HubSpotStatus;
+};
+
+export type ConnectTokenApiV1CrmHubspotTokenPostResponse = ConnectTokenApiV1CrmHubspotTokenPostResponses[keyof ConnectTokenApiV1CrmHubspotTokenPostResponses];
+
+export type OauthStartApiV1CrmHubspotOauthStartGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Return To
+         */
+        return_to?: string;
+    };
+    url: '/api/v1/crm/hubspot/oauth/start';
+};
+
+export type OauthStartApiV1CrmHubspotOauthStartGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type OauthStartApiV1CrmHubspotOauthStartGetError = OauthStartApiV1CrmHubspotOauthStartGetErrors[keyof OauthStartApiV1CrmHubspotOauthStartGetErrors];
+
+export type OauthStartApiV1CrmHubspotOauthStartGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: OAuthStart;
+};
+
+export type OauthStartApiV1CrmHubspotOauthStartGetResponse = OauthStartApiV1CrmHubspotOauthStartGetResponses[keyof OauthStartApiV1CrmHubspotOauthStartGetResponses];
+
+export type ListsApiV1CrmHubspotListsGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Q
+         */
+        q?: string;
+    };
+    url: '/api/v1/crm/hubspot/lists';
+};
+
+export type ListsApiV1CrmHubspotListsGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListsApiV1CrmHubspotListsGetError = ListsApiV1CrmHubspotListsGetErrors[keyof ListsApiV1CrmHubspotListsGetErrors];
+
+export type ListsApiV1CrmHubspotListsGetResponses = {
+    /**
+     * Response Lists Api V1 Crm Hubspot Lists Get
+     *
+     * Successful Response
+     */
+    200: Array<HubSpotList>;
+};
+
+export type ListsApiV1CrmHubspotListsGetResponse = ListsApiV1CrmHubspotListsGetResponses[keyof ListsApiV1CrmHubspotListsGetResponses];
+
+export type PropertiesApiV1CrmHubspotPropertiesGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/crm/hubspot/properties';
+};
+
+export type PropertiesApiV1CrmHubspotPropertiesGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PropertiesApiV1CrmHubspotPropertiesGetError = PropertiesApiV1CrmHubspotPropertiesGetErrors[keyof PropertiesApiV1CrmHubspotPropertiesGetErrors];
+
+export type PropertiesApiV1CrmHubspotPropertiesGetResponses = {
+    /**
+     * Response Properties Api V1 Crm Hubspot Properties Get
+     *
+     * Successful Response
+     */
+    200: Array<HubSpotProperty>;
+};
+
+export type PropertiesApiV1CrmHubspotPropertiesGetResponse = PropertiesApiV1CrmHubspotPropertiesGetResponses[keyof PropertiesApiV1CrmHubspotPropertiesGetResponses];
+
+export type PreviewApiV1CrmHubspotPreviewPostData = {
+    body: HubSpotSourceConfig;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/crm/hubspot/preview';
+};
+
+export type PreviewApiV1CrmHubspotPreviewPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PreviewApiV1CrmHubspotPreviewPostError = PreviewApiV1CrmHubspotPreviewPostErrors[keyof PreviewApiV1CrmHubspotPreviewPostErrors];
+
+export type PreviewApiV1CrmHubspotPreviewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: LeadPreview;
+};
+
+export type PreviewApiV1CrmHubspotPreviewPostResponse = PreviewApiV1CrmHubspotPreviewPostResponses[keyof PreviewApiV1CrmHubspotPreviewPostResponses];
+
+export type AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostData = {
+    body: AddLinkRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/knowledge-base/documents/from-url';
+};
+
+export type AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostError = AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostErrors[keyof AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostErrors];
+
+export type AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DocumentResponseSchema;
+};
+
+export type AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostResponse = AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostResponses[keyof AddLinkApiV1KnowledgeBaseDocumentsFromUrlPostResponses];
+
+export type ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path: {
+        /**
+         * Document Uuid
+         */
+        document_uuid: string;
+    };
+    query?: never;
+    url: '/api/v1/knowledge-base/documents/{document_uuid}/reprocess';
+};
+
+export type ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostError = ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostErrors[keyof ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostErrors];
+
+export type ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: DocumentResponseSchema;
+};
+
+export type ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostResponse = ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostResponses[keyof ReprocessApiV1KnowledgeBaseDocumentsDocumentUuidReprocessPostResponses];
+
+export type SummaryApiV1KnowledgeBaseSummaryGetData = {
+    body?: never;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Document Uuids
+         */
+        document_uuids?: Array<string>;
+    };
+    url: '/api/v1/knowledge-base/summary';
+};
+
+export type SummaryApiV1KnowledgeBaseSummaryGetErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SummaryApiV1KnowledgeBaseSummaryGetError = SummaryApiV1KnowledgeBaseSummaryGetErrors[keyof SummaryApiV1KnowledgeBaseSummaryGetErrors];
+
+export type SummaryApiV1KnowledgeBaseSummaryGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: KnowledgeSummary;
+};
+
+export type SummaryApiV1KnowledgeBaseSummaryGetResponse = SummaryApiV1KnowledgeBaseSummaryGetResponses[keyof SummaryApiV1KnowledgeBaseSummaryGetResponses];
+
+export type TryQuestionApiV1KnowledgeBaseTryPostData = {
+    body: TryRequest;
+    headers?: {
+        /**
+         * Authorization
+         */
+        authorization?: string | null;
+        /**
+         * X-Api-Key
+         */
+        'X-API-Key'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/knowledge-base/try';
+};
+
+export type TryQuestionApiV1KnowledgeBaseTryPostErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TryQuestionApiV1KnowledgeBaseTryPostError = TryQuestionApiV1KnowledgeBaseTryPostErrors[keyof TryQuestionApiV1KnowledgeBaseTryPostErrors];
+
+export type TryQuestionApiV1KnowledgeBaseTryPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: TryResponse;
+};
+
+export type TryQuestionApiV1KnowledgeBaseTryPostResponse = TryQuestionApiV1KnowledgeBaseTryPostResponses[keyof TryQuestionApiV1KnowledgeBaseTryPostResponses];
 
 export type ImpersonateApiV1SuperuserImpersonatePostData = {
     body: ImpersonateRequest;
