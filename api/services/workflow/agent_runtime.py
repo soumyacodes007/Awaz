@@ -97,6 +97,10 @@ class AgentRuntime:
     greeting_override: dict | None = None
     tools: Any = None
     system_prompt: str = ""
+    # Awaz: how this agent's knowledge base is delivered (inline or retrieval).
+    knowledge: Any = None
+    # The processor in front of ``llm`` that adds retrieved chunks per turn.
+    knowledge_injector: Any = None
     mcp_sessions: dict[str, Any] = field(default_factory=dict)
     tool_tasks: set[asyncio.Task] = field(default_factory=set, repr=False)
 
@@ -160,11 +164,13 @@ class AgentRuntime:
     async def run_llm(self, context: "LLMContext") -> None:
         """Ask this agent's LLM for a generation against the shared context.
 
-        Queued on the LLM service rather than on the worker so it lands after
-        whatever gate sits in front of the generation stage, matching how the
-        single-worker pipeline has always started a node's opening turn.
+        Queued on the knowledge injector (or the LLM service when there is
+        none) rather than on the worker so it lands after whatever gate sits in
+        front of the generation stage, matching how the single-worker pipeline
+        has always started a node's opening turn.
         """
-        await self.llm.queue_frame(LLMContextFrame(context))
+        target = self.knowledge_injector or self.llm
+        await target.queue_frame(LLMContextFrame(context))
 
     # -- lifecycle -------------------------------------------------------
 
