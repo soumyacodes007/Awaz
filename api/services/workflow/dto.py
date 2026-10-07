@@ -123,6 +123,16 @@ class _PromptedNodeDataMixin(BaseModel):
         display_name="Allow Interruption",
         description="When true, the user can interrupt the agent mid-utterance.",
     )
+    core_facts: Optional[str] = spec_field(
+        default=None,
+        ui_type=PropertyType.string,
+        display_name="Core facts",
+        description=(
+            "Facts the agent needs on most calls (hours, address, top prices, key "
+            "policies). Always in the prompt, after it and before the knowledge base."
+        ),
+        editor="textarea",
+    )
     add_global_prompt: bool = spec_field(
         default=True,
         ui_type=PropertyType.boolean,
