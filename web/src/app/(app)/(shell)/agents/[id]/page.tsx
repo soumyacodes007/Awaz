@@ -31,7 +31,7 @@ export default async function AgentPage({ params }: { params: Promise<{ id: stri
   const [res, tools, docs, clips, creds, model, defaults, runs, telephony, prefs, qaSpec] = await Promise.all([
     getAgentApiV1AgentsAgentIdGet({ headers, path: { agent_id: id } }),
     listToolsApiV1ToolsGet({ headers, query: { status: "active" } }),
-    listDocumentsApiV1KnowledgeBaseDocumentsGet({ headers, query: { limit: 200 } }),
+    listDocumentsApiV1KnowledgeBaseDocumentsGet({ headers, query: { limit: 100 } }), // the API caps a page at 100
     listRecordingsApiV1WorkflowRecordingsGet({ headers }),
     listCredentialsApiV1CredentialsGet({ headers }),
     getModelConfigurationV2ApiV1OrganizationsModelConfigurationsV2Get({ headers }),
