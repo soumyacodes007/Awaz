@@ -213,8 +213,9 @@ class CreateCampaignRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     workflow_id: int | None = Field(default=None, gt=0)
     traffic_split: TrafficSplitRequest | None = None
-    source_type: str = Field(..., pattern="^csv$")
-    source_id: str  # CSV file key
+    source_type: str = Field(..., pattern="^(csv|hubspot)$")
+    # CSV: the uploaded file key. HubSpot: JSON settings (list, phone property, fields).
+    source_id: str
     # Optional for backwards compatibility. When omitted, the resolver prefers
     # the marked default and then another ready active configuration.
     telephony_configuration_id: Optional[int] = None
