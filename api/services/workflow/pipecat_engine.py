@@ -565,6 +565,28 @@ class PipecatEngine:
                         "Organization ID not available for knowledge base retrieval"
                     )
 
+                # Awaz: search the same local hybrid index the per-turn
+                # retriever uses; Dograh's API-embedding search is the fallback
+                # for documents indexed before the local pipeline existed.
+                knowledge = getattr(agent, "knowledge", None)
+                if knowledge is not None and knowledge.index is not None:
+                    found = await knowledge.index.search(query)
+                    await function_call_params.result_callback(
+                        {
+                            "chunks": [
+                                {
+                                    "text": h.text,
+                                    "filename": h.document,
+                                    "score": round(h.score, 3),
+                                }
+                                for h in found.hits
+                            ],
+                            "query": query,
+                            "total_results": len(found.hits),
+                        }
+                    )
+                    return
+
                 result = await retrieve_from_knowledge_base(
                     query=query,
                     organization_id=organization_id,
@@ -821,7 +843,16 @@ class PipecatEngine:
                 node.tool_uuids,
                 mcp_tool_filters=getattr(node, "mcp_tool_filters", None),
             )
-        if node.document_uuids:
+        # Awaz: small knowledge bases are inlined in the prompt; large ones are
+        # searched every turn by the KnowledgeInjector before the LLM runs.
+        # The lookup tool is opt-in (AWAZ_KB_TOOL): the model calls it even
+        # with the answer already injected, costing a second LLM round trip.
+        from api.services.knowledge.retrieval import LOOKUP_TOOL
+
+        knowledge = await self._load_knowledge(node)
+        agent.knowledge = knowledge
+        lookup_tool = knowledge.mode == "retrieval" and LOOKUP_TOOL
+        if lookup_tool:
             await self._register_knowledge_base_function(
                 node.document_uuids, agent=agent
             )
@@ -830,9 +861,12 @@ class PipecatEngine:
             workflow=agent.workflow,
             format_prompt=self._format_prompt,
             has_recordings=self._has_recordings,
+            knowledge_section=knowledge.prompt_section(),
         )
         functions = await compose_functions_for_node(
-            node=node, custom_tool_manager=manager
+            node=node,
+            custom_tool_manager=manager,
+            knowledge_tool=lookup_tool,
         )
         agent.tools = ToolsSchema(standard_tools=functions)
         agent.system_prompt = prompt.text
@@ -842,6 +876,23 @@ class PipecatEngine:
             await agent.llm._update_settings(
                 LLMSettings(system_instruction=prompt.text)
             )
+
+    async def _load_knowledge(self, node: Node):
+        """The node's knowledge (inline / retrieval / none). A failure to load
+        must not break the call, so it degrades to no knowledge."""
+        from api.services.knowledge import local_models, retrieval
+
+        if not node.document_uuids:
+            return retrieval.Knowledge(mode="none")
+        try:
+            organization_id = await self._get_organization_id()
+            knowledge = await retrieval.load(organization_id, node.document_uuids)
+            if knowledge.mode == "retrieval":
+                await local_models.warm()
+            return knowledge
+        except Exception as exc:
+            logger.error(f"[knowledge] couldn't load documents for {node.name}: {exc}")
+            return retrieval.Knowledge(mode="none")
 
     async def _setup_llm_context(self, node: Node) -> None:
         agent = self.active_agent
